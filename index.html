@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glassmorphism QR Code Generator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QR Code Styling Library -->
+    <script type="text/javascript" src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+    <!-- Google Font - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Animated Gradient Background */
+        body {
+            background: linear-gradient(-45deg, #0f172a, #1e1b4b, #311042, #111827);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Glassmorphism Styles */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .glass-input {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .glass-input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #6366f1;
+            outline: none;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .glass-input option {
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+
+        /* Active Tab Highlight */
+        .tab-btn.active {
+            background: rgba(99, 102, 241, 0.35);
+            border-bottom: 2px solid #818cf8;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 flex items-center justify-center min-h-screen py-8 md:py-12">
+
+    <div class="max-w-6xl w-full glass-panel rounded-3xl p-6 md:p-10 text-slate-100 my-auto">
+        
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight flex items-center justify-center gap-3">
+                <i class="fa-solid fa-qrcode text-indigo-400"></i> Glassmorphic QR Generator
+            </h1>
+            <p class="text-slate-300 text-sm md:text-base mt-2 font-medium">Create customized, high-definition & artistic QR codes directly in your browser</p>
+        </header>
+
+        <!-- Main Grid Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- Left Form Controls Panel -->
+            <div class="lg:col-span-7 space-y-6">
+
+                <!-- Navigation Tabs -->
+                <div class="flex flex-wrap gap-2 p-1.5 glass-card rounded-2xl justify-between">
+                    <button onclick="switchTab('text')" id="tab-text" class="tab-btn active flex-1 py-2.5 px-3 rounded-xl text-xs md:text-sm font-medium text-slate-300 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-font"></i> Text
+                    </button>
+                    <button onclick="switchTab('link')" id="tab-link" class="tab-btn flex-1 py-2.5 px-3 rounded-xl text-xs md:text-sm font-medium text-slate-300 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-link"></i> Link
+                    </button>
+                    <button onclick="switchTab('contact')" id="tab-contact" class="tab-btn flex-1 py-2.5 px-3 rounded-xl text-xs md:text-sm font-medium text-slate-300 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-address-card"></i> Contact Info
+                    </button>
+                    <button onclick="switchTab('art')" id="tab-art" class="tab-btn flex-1 py-2.5 px-3 rounded-xl text-xs md:text-sm font-medium text-slate-300 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Art / Hidden
+                    </button>
+                </div>
+
+                <!-- Input Forms Section -->
+                <div class="glass-card p-6 rounded-2xl">
+                    
+                    <!-- 1. Text Input -->
+                    <div id="form-text" class="tab-content space-y-3">
+                        <label class="block text-slate-200 font-semibold text-sm md:text-base"><i class="fa-regular fa-file-lines text-indigo-400"></i> Plain Text Content:</label>
+                        <textarea id="input-text" rows="4" class="w-full p-3 rounded-xl glass-input placeholder-slate-400 font-normal" placeholder="Type or paste any text content here..." oninput="updateQRCode()"></textarea>
+                    </div>
+
+                    <!-- 2. Link / URL Input -->
+                    <div id="form-link" class="tab-content hidden space-y-3">
+                        <label class="block text-slate-200 font-semibold text-sm md:text-base"><i class="fa-solid fa-globe text-indigo-400"></i> Website URL Link:</label>
+                        <input type="url" id="input-url" class="w-full p-3 rounded-xl glass-input placeholder-slate-400" placeholder="https://example.com" oninput="updateQRCode()">
+                    </div>
+
+                    <!-- 3. Contact Info (vCard) -->
+                    <div id="form-contact" class="tab-content hidden space-y-3">
+                        <label class="block text-slate-200 font-semibold text-sm md:text-base"><i class="fa-solid fa-user-plus text-indigo-400"></i> Contact Info (vCard Format):</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <input type="text" id="vcard-name" placeholder="Full Name *" class="p-3 rounded-xl glass-input placeholder-slate-400 text-sm" oninput="updateQRCode()">
+                            <input type="tel" id="vcard-phone" placeholder="Phone Number *" class="p-3 rounded-xl glass-input placeholder-slate-400 text-sm" oninput="updateQRCode()">
+                            <input type="email" id="vcard-email" placeholder="Email Address" class="p-3 rounded-xl glass-input placeholder-slate-400 text-sm" oninput="updateQRCode()">
+                            <input type="text" id="vcard-org" placeholder="Organization / Company" class="p-3 rounded-xl glass-input placeholder-slate-400 text-sm" oninput="updateQRCode()">
+                            <input type="url" id="vcard-website" placeholder="Website URL" class="p-3 rounded-xl glass-input placeholder-slate-400 text-sm md:col-span-2" oninput="updateQRCode()">
+                        </div>
+                    </div>
+
+                    <!-- 4. Art / Hidden QR Code -->
+                    <div id="form-art" class="tab-content hidden space-y-4">
+                        <div>
+                            <label class="block text-slate-200 font-semibold text-sm mb-1"><i class="fa-solid fa-key text-indigo-400"></i> Hidden Payload (Text or URL):</label>
+                            <input type="text" id="art-data" placeholder="Secret link or secret text to encode..." class="w-full p-3 rounded-xl glass-input placeholder-slate-400 text-sm" oninput="updateQRCode()">
+                        </div>
+                        <div>
+                            <label class="block text-slate-200 font-semibold text-sm mb-1"><i class="fa-solid fa-image text-indigo-400"></i> Background Image for Blending:</label>
+                            <input type="file" id="art-image-input" accept="image/*" class="w-full p-2 glass-input rounded-xl text-xs text-slate-300 cursor-pointer" onchange="handleArtImageUpload(event)">
+                        </div>
+                        <div>
+                            <label class="block text-slate-200 font-semibold text-xs mb-1">Image Blending Opacity: <span id="art-opacity-val" class="text-indigo-400 font-bold">50%</span></label>
+                            <input type="range" id="art-opacity" min="0.1" max="0.9" value="0.5" step="0.05" class="w-full accent-indigo-500 cursor-pointer" oninput="document.getElementById('art-opacity-val').innerText = Math.round(this.value * 100) + '%'; updateQRCode();">
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Customization Panel -->
+                <div class="glass-card p-6 rounded-2xl space-y-5">
+                    <h2 class="text-lg font-bold text-white border-b border-white/10 pb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-indigo-400"></i> Advanced Customization Settings
+                    </h2>
+
+                    <!-- Error Correction Level & Preset Size -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-slate-200 font-medium text-xs mb-1">Error Correction Level:</label>
+                            <select id="ecc-level" class="w-full p-2.5 rounded-xl glass-input text-xs font-medium" onchange="updateQRCode()">
+                                <option value="L">Low (L) - 7% Recovery</option>
+                                <option value="M" selected>Medium (M) - 15% Recovery</option>
+                                <option value="Q">Quartile (Q) - 25% Recovery</option>
+                                <option value="H">High (H) - 30% Recovery</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-slate-200 font-medium text-xs mb-1">Preset Size Options:</label>
+                            <select id="preset-size" class="w-full p-2.5 rounded-xl glass-input text-xs font-medium" onchange="applyPresetSize(this.value)">
+                                <option value="200">Small (200 x 200 px)</option>
+                                <option value="300" selected>Medium (300 x 300 px)</option>
+                                <option value="400">Large (400 x 400 px)</option>
+                                <option value="custom">Custom Size Slider</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Colors Customization with Swap Button -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                        <div>
+                            <label class="block text-slate-200 font-medium text-xs mb-1">Foreground (Dark) Color:</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" id="color-dark" value="#0f172a" class="h-10 w-12 rounded-lg cursor-pointer bg-transparent border-0" onchange="updateQRCode()">
+                                <input type="text" id="color-dark-hex" value="#0F172A" class="w-full p-2 rounded-xl glass-input text-xs uppercase" readonly>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-slate-200 font-medium text-xs mb-1">Background (Light) Color:</label>
+                            <div class="flex items-center gap-2">
+                                <input type="color" id="color-light" value="#ffffff" class="h-10 w-12 rounded-lg cursor-pointer bg-transparent border-0" onchange="updateQRCode()">
+                                <input type="text" id="color-light-hex" value="#FFFFFF" class="w-full p-2 rounded-xl glass-input text-xs uppercase" readonly>
+                                <button onclick="swapColors()" title="Swap Colors" class="p-2.5 rounded-xl glass-input hover:bg-white/20 transition">
+                                    <i class="fa-solid fa-arrows-rotate text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Size Slider & Border Padding -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-slate-200 font-medium text-xs mb-1">Canvas Size: <span id="scale-val" class="font-bold text-indigo-400">300</span>px</label>
+                            <input type="range" id="qr-scale" min="150" max="600" value="300" step="10" class="w-full accent-indigo-500 cursor-pointer" oninput="document.getElementById('scale-val').innerText=this.value; updateQRCode();">
+                        </div>
+                        <div>
+                            <label class="block text-slate-200 font-medium text-xs mb-1">Border Padding: <span id="border-val" class="font-bold text-indigo-400">4</span> modules</label>
+                            <input type="range" id="qr-border" min="0" max="10" value="4" class="w-full accent-indigo-500 cursor-pointer" oninput="document.getElementById('border-val').innerText=this.value; updateQRCode();">
+                        </div>
+                    </div>
+
+                    <!-- Center Logo Upload -->
+                    <div>
+                        <label class="block text-slate-200 font-medium text-xs mb-1"><i class="fa-solid fa-icons text-indigo-400"></i> Center Logo Image Overlay:</label>
+                        <div class="flex gap-2">
+                            <input type="file" id="logo-input" accept="image/*" class="w-full p-2 glass-input rounded-xl text-xs text-slate-300 cursor-pointer" onchange="handleLogoUpload(event)">
+                            <button onclick="clearLogo()" class="px-3 py-2 text-xs bg-red-500/30 hover:bg-red-500/50 rounded-xl text-white transition">Clear</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Right Preview & Statistics Panel -->
+            <div class="lg:col-span-5 flex flex-col gap-6">
+
+                <!-- Live Preview Card -->
+                <div class="glass-card p-6 rounded-2xl flex flex-col items-center justify-center text-center relative min-h-[400px]">
+                    <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-eye text-indigo-400"></i> Live QR Code Preview
+                    </h3>
+
+                    <!-- Display Canvas Container -->
+                    <div id="qr-wrapper" class="p-5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-inner flex items-center justify-center min-w-[240px] min-h-[240px]">
+                        <div id="qrcode-canvas" class="flex justify-center items-center"></div>
+                    </div>
+
+                    <!-- Export & Format Select Controls -->
+                    <div class="mt-6 w-full space-y-3">
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs text-slate-300 font-medium">Export Format:</label>
+                            <select id="output-format" class="flex-1 p-2 rounded-xl glass-input text-xs font-semibold">
+                                <option value="png">PNG (Bitmap Image)</option>
+                                <option value="jpeg">JPG (Bitmap Image)</option>
+                                <option value="svg">SVG (Vector Graphics)</option>
+                            </select>
+                        </div>
+                        <button onclick="downloadQR()" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold text-base shadow-lg hover:shadow-indigo-500/30 transition duration-300 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-download"></i> Download QR Code
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Statistics Card -->
+                <div class="glass-card p-6 rounded-2xl space-y-3">
+                    <h3 class="text-md font-bold text-white border-b border-white/10 pb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-pie text-indigo-400"></i> QR Code Live Statistics
+                    </h3>
+                    <div class="grid grid-cols-2 gap-3 text-xs text-slate-200">
+                        <div class="p-2.5 rounded-xl bg-white/5 border border-white/10">
+                            <span class="text-slate-400 block text-[10px] uppercase tracking-wider">Version Range</span>
+                            <span id="stat-version" class="font-bold text-sm text-indigo-300">1 (Auto)</span>
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-white/5 border border-white/10">
+                            <span class="text-slate-400 block text-[10px] uppercase tracking-wider">Mask Pattern</span>
+                            <span id="stat-mask" class="font-bold text-sm text-indigo-300">Auto (-1)</span>
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-white/5 border border-white/10">
+                            <span class="text-slate-400 block text-[10px] uppercase tracking-wider">Character Count</span>
+                            <span id="stat-chars" class="font-bold text-sm text-indigo-300">0</span>
+                        </div>
+                        <div class="p-2.5 rounded-xl bg-white/5 border border-white/10">
+                            <span class="text-slate-400 block text-[10px] uppercase tracking-wider">Error Correction</span>
+                            <span id="stat-ecc" class="font-bold text-sm text-indigo-300">Medium (M)</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-8 text-center text-slate-400 text-xs font-medium">
+            <p>Ready for deployment on GitHub Pages • Client-Side HTML5 / Canvas Engine</p>
+        </footer>
+
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // State Variables
+        let currentTab = 'text';
+        let qrCodeStyling = null;
+        let uploadedLogoData = null;
+        let artImageData = null;
+
+        // Initialize App on DOM Ready
+        window.onload = function() {
+            initQRCode();
+            updateQRCode();
+        };
+
+        // Tab Navigation Switching
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Highlight buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.add('active');
+
+            // Toggle form views
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+            document.getElementById(`form-${tab}`).classList.remove('hidden');
+
+            updateQRCode();
+        }
+
+        // Initialize QR Code Styling Engine
+        function initQRCode() {
+            qrCodeStyling = new QRCodeStyling({
+                width: 250,
+                height: 250,
+                type: "canvas",
+                data: "https://github.com",
+                image: "",
+                dotsOptions: {
+                    color: "#0f172a",
+                    type: "rounded"
+                },
+                backgroundOptions: {
+                    color: "#ffffff",
+                },
+                imageOptions: {
+                    crossOrigin: "anonymous",
+                    margin: 4
+                }
+            });
+
+            const container = document.getElementById("qrcode-canvas");
+            container.innerHTML = "";
+            qrCodeStyling.append(container);
+        }
+
+        // Retrieve current active payload
+        function getQRData() {
+            let data = "";
+            if (currentTab === 'text') {
+                data = document.getElementById('input-text').value || "Welcome to Glassmorphic QR Generator!";
+            } else if (currentTab === 'link') {
+                data = document.getElementById('input-url').value || "https://github.com";
+            } else if (currentTab === 'contact') {
+                const name = document.getElementById('vcard-name').value || "John Doe";
+                const phone = document.getElementById('vcard-phone').value || "+1234567890";
+                const email = document.getElementById('vcard-email').value || "john@example.com";
+                const org = document.getElementById('vcard-org').value || "Acme Corp";
+                const website = document.getElementById('vcard-website').value || "https://example.com";
+                data = `BEGIN:VCARD\nVERSION:3.0\nN:${name}\nTEL:${phone}\nEMAIL:${email}\nORG:${org}\nURL:${website}\nEND:VCARD`;
+            } else if (currentTab === 'art') {
+                data = document.getElementById('art-data').value || "Artistic Hidden QR Code Data";
+            }
+            return data;
+        }
+
+        // Main QR Update Handler
+        function updateQRCode() {
+            if (!qrCodeStyling) return;
+
+            const dataText = getQRData();
+            const darkColor = document.getElementById('color-dark').value;
+            const lightColor = document.getElementById('color-light').value;
+            const size = parseInt(document.getElementById('qr-scale').value) || 300;
+            const margin = parseInt(document.getElementById('qr-border').value) || 4;
+            const ecc = document.getElementById('ecc-level').value;
+
+            // Sync Hex input values
+            document.getElementById('color-dark-hex').value = darkColor.toUpperCase();
+            document.getElementById('color-light-hex').value = lightColor.toUpperCase();
+
+            // Configure rendering options
+            const options = {
+                width: 250,
+                height: 250,
+                data: dataText,
+                margin: margin,
+                qrOptions: {
+                    errorCorrectionLevel: ecc
+                },
+                dotsOptions: {
+                    color: darkColor,
+                    type: "rounded"
+                },
+                backgroundOptions: {
+                    color: lightColor,
+                },
+                image: uploadedLogoData || ""
+            };
+
+            qrCodeStyling.update(options);
+
+            // Trigger art blending if art tab active & image uploaded
+            if (currentTab === 'art' && artImageData) {
+                setTimeout(() => applyArtQRBlending(artImageData), 120);
+            }
+
+            // Update live statistics
+            updateStats(dataText, ecc);
+        }
+
+        // Apply Preset Canvas Size
+        function applyPresetSize(val) {
+            if (val !== 'custom') {
+                document.getElementById('qr-scale').value = val;
+                document.getElementById('scale-val').innerText = val;
+                updateQRCode();
+            }
+        }
+
+        // Swap Foreground & Background Colors
+        function swapColors() {
+            const darkElem = document.getElementById('color-dark');
+            const lightElem = document.getElementById('color-light');
+            const temp = darkElem.value;
+            darkElem.value = lightElem.value;
+            lightElem.value = temp;
+            updateQRCode();
+        }
+
+        // Handle Center Logo Upload
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedLogoData = e.target.result;
+                    updateQRCode();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Clear Logo Image
+        function clearLogo() {
+            uploadedLogoData = null;
+            document.getElementById('logo-input').value = "";
+            updateQRCode();
+        }
+
+        // Handle Art Image Upload
+        function handleArtImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    artImageData = e.target.result;
+                    updateQRCode();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Custom Canvas Blending for Art/Hidden QR Codes
+        function applyArtQRBlending(imageSrc) {
+            const canvasElem = document.querySelector('#qrcode-canvas canvas');
+            if (!canvasElem) return;
+
+            const ctx = canvasElem.getContext('2d');
+            const opacity = parseFloat(document.getElementById('art-opacity').value) || 0.5;
+            const img = new Image();
+            img.src = imageSrc;
+
+            img.onload = function() {
+                ctx.globalAlpha = opacity;
+                ctx.drawImage(img, 0, 0, canvasElem.width, canvasElem.height);
+                ctx.globalAlpha = 1.0;
+            };
+        }
+
+        // Update Statistics Panel
+        function updateStats(dataText, ecc) {
+            document.getElementById('stat-chars').innerText = dataText.length;
+            document.getElementById('stat-ecc').innerText = `${ecc} Level`;
+            
+            // Approximate QR version calculation
+            let version = Math.min(Math.max(Math.ceil(dataText.length / 15), 1), 40);
+            document.getElementById('stat-version').innerText = `${version} (Auto)`;
+            document.getElementById('stat-mask').innerText = "Auto (-1)";
+        }
+
+        // Download QR Code File
+        function downloadQR() {
+            const format = document.getElementById('output-format').value;
+            const timestamp = new Date().getTime();
+            const filename = `qrcode_${currentTab}_${timestamp}`;
+
+            if (qrCodeStyling) {
+                qrCodeStyling.download({
+                    name: filename,
+                    extension: format
+                });
+            }
+        }
+    </script>
+</body>
+</html>
