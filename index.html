@@ -329,3 +329,140 @@
     <script src="script.js"></script>
 </body>
 </html>
+<!-- QR Code Types Dropdown -->
+<div class="relative dropdown-container">
+    <button onclick="toggleDropdown(event, 'dropdown-types')" class="flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors">
+        <span>QR Code types</span>
+        <i class="fa-solid fa-chevron-down text-xs"></i>
+    </button>
+    <div id="dropdown-types" class="dropdown-menu absolute left-0 mt-2 w-64 glass-panel rounded-2xl p-2 z-50 shadow-2xl">
+        <a href="#" onclick="selectCategory('communication', 'text'); closeAllDropdowns();" class="flex items-center space-x-3 p-2.5 rounded-xl hover:bg-white/10 transition-colors">
+            <i class="fa-solid fa-align-left text-purple-400"></i>
+            <div>
+                <div class="text-xs font-semibold text-white">Plain Text / URL</div>
+                <div class="text-[11px] text-slate-400">Standard web links and text</div>
+            </div>
+        </a>
+        <a href="#" onclick="selectCategory('communication', 'vcard'); closeAllDropdowns();" class="flex items-center space-x-3 p-2.5 rounded-xl hover:bg-white/10 transition-colors">
+            <i class="fa-solid fa-address-card text-emerald-400"></i>
+            <div>
+                <div class="text-xs font-semibold text-white">vCard / Contact</div>
+                <div class="text-[11px] text-slate-400">Digital contact card</div>
+            </div>
+        </a>
+        <a href="#" onclick="selectCategory('communication', 'wifi'); closeAllDropdowns();" class="flex items-center space-x-3 p-2.5 rounded-xl hover:bg-white/10 transition-colors">
+            <i class="fa-solid fa-wifi text-blue-400"></i>
+            <div>
+                <div class="text-xs font-semibold text-white">Wi-Fi Connect</div>
+                <div class="text-[11px] text-slate-400">Instant Wi-Fi credentials</div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- Industries Dropdown -->
+<div class="relative dropdown-container">
+    <button onclick="toggleDropdown(event, 'dropdown-industries')" class="flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors">
+        <span>Industries</span>
+        <i class="fa-solid fa-chevron-down text-xs"></i>
+    </button>
+    <div id="dropdown-industries" class="dropdown-menu absolute left-0 mt-2 w-80 glass-panel rounded-2xl p-4 z-50 shadow-2xl grid grid-cols-1 gap-3">
+        <div onclick="closeAllDropdowns()" class="flex items-start space-x-3 p-2 rounded-xl hover:bg-white/10 cursor-pointer">
+            <i class="fa-solid fa-utensils text-emerald-400 text-lg mt-0.5"></i>
+            <div>
+                <div class="text-xs font-bold text-white">Restaurants</div>
+                <div class="text-[11px] text-slate-400">Menus, orders, feedback, reviews</div>
+            </div>
+        </div>
+        <div onclick="closeAllDropdowns()" class="flex items-start space-x-3 p-2 rounded-xl hover:bg-white/10 cursor-pointer">
+            <i class="fa-solid fa-building text-amber-400 text-lg mt-0.5"></i>
+            <div>
+                <div class="text-xs font-bold text-white">Real Estate</div>
+                <div class="text-[11px] text-slate-400">Listings, tours, leads, inquiries</div>
+            </div>
+        </div>
+        <div onclick="closeAllDropdowns()" class="flex items-start space-x-3 p-2 rounded-xl hover:bg-white/10 cursor-pointer">
+            <i class="fa-solid fa-graduation-cap text-blue-400 text-lg mt-0.5"></i>
+            <div>
+                <div class="text-xs font-bold text-white">Education</div>
+                <div class="text-[11px] text-slate-400">Resources, access, learning, updates</div>
+            </div>
+        </div>
+        <div onclick="closeAllDropdowns()" class="flex items-start space-x-3 p-2 rounded-xl hover:bg-white/10 cursor-pointer">
+            <i class="fa-solid fa-ticket text-purple-400 text-lg mt-0.5"></i>
+            <div>
+                <div class="text-xs font-bold text-white">Events</div>
+                <div class="text-[11px] text-slate-400">Check-ins, tickets, schedules</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Dropdown -->
+<div class="relative dropdown-container">
+    <button onclick="toggleDropdown(event, 'dropdown-features')" class="flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors">
+        <span>Features</span>
+        <i class="fa-solid fa-chevron-down text-xs"></i>
+    </button>
+    <div id="dropdown-features" class="dropdown-menu absolute left-0 mt-2 w-80 glass-panel rounded-2xl p-4 z-50 shadow-2xl grid grid-cols-1 gap-3">
+        <div onclick="closeAllDropdowns()" class="flex items-start space-x-3 p-2 rounded-xl hover:bg-white/10 cursor-pointer">
+            <i class="fa-solid fa-bolt text-amber-400 text-lg mt-0.5"></i>
+            <div>
+                <div class="text-xs font-bold text-white">Dynamic QR</div>
+                <div class="text-[11px] text-slate-400">Edit destinations without reprinting</div>
+            </div>
+        </div>
+        <div onclick="closeAllDropdowns()" class="flex items-start space-x-3 p-2 rounded-xl hover:bg-white/10 cursor-pointer">
+            <i class="fa-solid fa-chart-line text-blue-400 text-lg mt-0.5"></i>
+            <div>
+                <div class="text-xs font-bold text-white">Trackable</div>
+                <div class="text-[11px] text-slate-400">Track scans, locations, devices</div>
+            </div>
+        </div>
+        <div onclick="closeAllDropdowns()" class="flex items-start space-x-3 p-2 rounded-xl hover:bg-white/10 cursor-pointer">
+            <i class="fa-solid fa-image text-purple-400 text-lg mt-0.5"></i>
+            <div>
+                <div class="text-xs font-bold text-white">QR Code with Logo</div>
+                <div class="text-[11px] text-slate-400">Branded QR codes with logos</div>
+            </div>
+        </div>
+        <div onclick="closeAllDropdowns()" class="flex items-start space-x-3 p-2 rounded-xl hover:bg-white/10 cursor-pointer">
+            <i class="fa-solid fa-palette text-pink-400 text-lg mt-0.5"></i>
+            <div>
+                <div class="text-xs font-bold text-white">Colored QR Codes</div>
+                <div class="text-[11px] text-slate-400">Custom colors for branding</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Resources Dropdown -->
+<div class="relative dropdown-container">
+    <button onclick="toggleDropdown(event, 'dropdown-resources')" class="flex items-center space-x-1.5 px-3.5 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-colors">
+        <span>Resources</span>
+        <i class="fa-solid fa-chevron-down text-xs"></i>
+    </button>
+    <div id="dropdown-resources" class="dropdown-menu absolute left-0 mt-2 w-80 glass-panel rounded-2xl p-4 z-50 shadow-2xl grid grid-cols-1 gap-3">
+        <div onclick="closeAllDropdowns()" class="flex items-start space-x-3 p-2 rounded-xl hover:bg-white/10 cursor-pointer">
+            <i class="fa-solid fa-book-open text-amber-500 text-lg mt-0.5"></i>
+            <div>
+                <div class="text-xs font-bold text-white">Blog</div>
+                <div class="text-[11px] text-slate-400">Guides, tips, QR use-cases</div>
+            </div>
+        </div>
+        <div onclick="closeAllDropdowns()" class="flex items-start space-x-3 p-2 rounded-xl hover:bg-white/10 cursor-pointer">
+            <i class="fa-brands fa-chrome text-blue-400 text-lg mt-0.5"></i>
+            <div>
+                <div class="text-xs font-bold text-white">Chrome Extension</div>
+                <div class="text-[11px] text-slate-400">Create QR Codes with one tap</div>
+            </div>
+        </div>
+        <div onclick="closeAllDropdowns()" class="flex items-start space-x-3 p-2 rounded-xl hover:bg-white/10 cursor-pointer">
+            <i class="fa-solid fa-mobile-screen-button text-purple-400 text-lg mt-0.5"></i>
+            <div>
+                <div class="text-xs font-bold text-white">Mobile App</div>
+                <div class="text-[11px] text-slate-400">Generate QR Codes anywhere</div>
+            </div>
+        </div>
+    </div>
+</div>
