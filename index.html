@@ -3,36 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The QR Code Generator (TQRCG) - Surajit Helper</title>
+    <title>Surajit QR Code Helper</title>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- QRCode Styling Library -->
     <script src="https://cdn.jsdelivr.net/npm/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
 
     <style>
+        * {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* Glassmorphism Dynamic Background */
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #ffffff;
-            color: #171717;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 35%, #311042 70%, #0f172a 100%);
+            background-attachment: fixed;
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-        /* Dropdown Absolute Fix & Animation */
-        .dropdown-content {
-            display: none;
+
+        /* Glass Panels & Cards */
+        .glass-header {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-widget {
+            background: rgba(30, 41, 59, 0.55);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-dropdown {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .glass-input {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: #ffffff;
+        }
+
+        .glass-input:focus {
+            outline: none;
+            border-color: #a855f7;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+        }
+
+        /* Dropdown Animation */
+        .dropdown-menu {
             opacity: 0;
-            transform: translateY(8px);
-            transition: all 0.15s ease-in-out;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.2s ease-in-out;
+            pointer-events: none;
         }
-        .dropdown-content.show {
-            display: block;
+
+        .dropdown-menu.show {
             opacity: 1;
+            visibility: visible;
             transform: translateY(0);
+            pointer-events: auto;
         }
+
         .scrollbar-hide::-webkit-scrollbar {
             display: none;
         }
@@ -44,159 +93,209 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- Header Section -->
-    <header class="sticky top-0 z-50 border-b border-neutral-200 bg-white">
-        <div class="flex items-center justify-between px-4 py-3 max-w-[1400px] mx-auto">
+    <!-- Glassmorphism Header Section -->
+    <header class="sticky top-0 z-50 glass-header px-4 lg:px-8 py-3.5">
+        <div class="flex items-center justify-between px-2 max-w-[1400px] mx-auto">
             <div class="flex items-center gap-3 lg:gap-4 xl:gap-8">
-                <a href="/" class="flex shrink-0 items-center">
-                    <span class="font-bold text-xl text-emerald-600">Surajit QR Helper</span>
+                <a href="/" class="flex shrink-0 items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-purple-500/30">
+                        <i class="fa-solid fa-qrcode text-white text-xl"></i>
+                    </div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-white via-purple-200 to-purple-400 bg-clip-text text-transparent">
+                        Surajit QR Helper
+                    </span>
                 </a>
-                <nav class="hidden items-center gap-3 lg:flex xl:gap-6">
-                    <a aria-current="page" class="whitespace-nowrap text-sm xl:text-base transition-colors text-emerald-600 font-semibold relative after:absolute after:-bottom-3 after:left-0 after:right-0 after:h-[2px] after:bg-emerald-600" href="/">QR Code Generator</a>
-                    <a class="whitespace-nowrap text-sm xl:text-base transition-colors text-neutral-700 hover:text-black" href="#" onclick="openScanner()">Scan</a>
+
+                <nav class="hidden items-center gap-2 lg:flex xl:gap-4">
+                    <a class="px-3.5 py-2 rounded-xl text-sm font-semibold text-purple-300 bg-purple-500/20 border border-purple-500/30 shadow-sm" href="/">
+                        QR Code Generator
+                    </a>
+                    <button onclick="openScanner()" class="px-3.5 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-colors">
+                        Scan QR
+                    </button>
                     
                     <!-- Dropdown: QR Code types -->
                     <div class="relative">
-                        <button onclick="toggleDropdown(event, 'drop-types')" class="flex items-center gap-1 whitespace-nowrap text-sm xl:text-base transition-colors text-neutral-700 hover:text-black focus:outline-none">
-                            QR Code types <i class="fa-solid fa-chevron-down text-xs"></i>
+                        <button onclick="toggleDropdown(event, 'drop-types')" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-colors">
+                            <span>QR Code types</span> <i class="fa-solid fa-chevron-down text-xs opacity-70"></i>
                         </button>
-                        <div id="drop-types" class="dropdown-content absolute left-0 top-full mt-2 w-72 bg-white border border-neutral-200 rounded-xl shadow-2xl p-3 z-50 space-y-1">
-                            <a href="#" onclick="selectTab('url'); closeAllDropdowns();" class="block p-2 rounded-lg hover:bg-neutral-100 text-sm font-medium text-neutral-800">URL / Web Link</a>
-                            <a href="#" onclick="selectTab('contact'); closeAllDropdowns();" class="block p-2 rounded-lg hover:bg-neutral-100 text-sm font-medium text-neutral-800">vCard / Contact</a>
-                            <a href="#" onclick="selectTab('text'); closeAllDropdowns();" class="block p-2 rounded-lg hover:bg-neutral-100 text-sm font-medium text-neutral-800">Plain Text</a>
-                            <a href="#" onclick="selectTab('email'); closeAllDropdowns();" class="block p-2 rounded-lg hover:bg-neutral-100 text-sm font-medium text-neutral-800">Email</a>
+                        <div id="drop-types" class="dropdown-menu glass-dropdown absolute left-0 top-full mt-2 w-72 rounded-2xl p-3 z-50 space-y-1">
+                            <a href="#" onclick="selectTab('url'); closeAllDropdowns();" class="flex items-center space-x-3 p-2.5 rounded-xl hover:bg-white/10 transition-colors">
+                                <i class="fa-solid fa-link text-purple-400"></i>
+                                <div>
+                                    <div class="text-xs font-semibold text-white">URL / Web Link</div>
+                                    <div class="text-[11px] text-slate-400">Standard web links</div>
+                                </div>
+                            </a>
+                            <a href="#" onclick="selectTab('contact'); closeAllDropdowns();" class="flex items-center space-x-3 p-2.5 rounded-xl hover:bg-white/10 transition-colors">
+                                <i class="fa-solid fa-address-card text-emerald-400"></i>
+                                <div>
+                                    <div class="text-xs font-semibold text-white">vCard Contact</div>
+                                    <div class="text-[11px] text-slate-400">Digital contact info</div>
+                                </div>
+                            </a>
+                            <a href="#" onclick="selectTab('text'); closeAllDropdowns();" class="flex items-center space-x-3 p-2.5 rounded-xl hover:bg-white/10 transition-colors">
+                                <i class="fa-solid fa-align-left text-blue-400"></i>
+                                <div>
+                                    <div class="text-xs font-semibold text-white">Plain Text</div>
+                                    <div class="text-[11px] text-slate-400">Raw text messages</div>
+                                </div>
+                            </a>
+                            <a href="#" onclick="selectTab('email'); closeAllDropdowns();" class="flex items-center space-x-3 p-2.5 rounded-xl hover:bg-white/10 transition-colors">
+                                <i class="fa-solid fa-envelope text-amber-400"></i>
+                                <div>
+                                    <div class="text-xs font-semibold text-white">Email</div>
+                                    <div class="text-[11px] text-slate-400">Pre-filled email message</div>
+                                </div>
+                            </a>
                         </div>
                     </div>
 
                     <!-- Dropdown: Industries -->
                     <div class="relative">
-                        <button onclick="toggleDropdown(event, 'drop-industries')" class="flex items-center gap-1 whitespace-nowrap text-sm xl:text-base transition-colors text-neutral-700 hover:text-black focus:outline-none">
-                            Industries <i class="fa-solid fa-chevron-down text-xs"></i>
+                        <button onclick="toggleDropdown(event, 'drop-industries')" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-colors">
+                            <span>Industries</span> <i class="fa-solid fa-chevron-down text-xs opacity-70"></i>
                         </button>
-                        <div id="drop-industries" class="dropdown-content absolute left-0 top-full mt-2 w-64 bg-white border border-neutral-200 rounded-xl shadow-2xl p-3 z-50 space-y-2">
-                            <div class="p-2 hover:bg-neutral-100 rounded-lg cursor-pointer text-sm font-medium text-neutral-800">Restaurants & Cafes</div>
-                            <div class="p-2 hover:bg-neutral-100 rounded-lg cursor-pointer text-sm font-medium text-neutral-800">Real Estate</div>
+                        <div id="drop-industries" class="dropdown-menu glass-dropdown absolute left-0 top-full mt-2 w-64 rounded-2xl p-3 z-50 space-y-2">
+                            <div class="p-2.5 hover:bg-white/10 rounded-xl cursor-pointer">
+                                <div class="text-xs font-bold text-white">Restaurants & Cafes</div>
+                                <div class="text-[11px] text-slate-400">Digital menus & orders</div>
+                            </div>
+                            <div class="p-2.5 hover:bg-white/10 rounded-xl cursor-pointer">
+                                <div class="text-xs font-bold text-white">Real Estate</div>
+                                <div class="text-[11px] text-slate-400">Listings & property tours</div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Dropdown: Features -->
                     <div class="relative">
-                        <button onclick="toggleDropdown(event, 'drop-features')" class="flex items-center gap-1 whitespace-nowrap text-sm xl:text-base transition-colors text-neutral-700 hover:text-black focus:outline-none">
-                            Features <i class="fa-solid fa-chevron-down text-xs"></i>
+                        <button onclick="toggleDropdown(event, 'drop-features')" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-colors">
+                            <span>Features</span> <i class="fa-solid fa-chevron-down text-xs opacity-70"></i>
                         </button>
-                        <div id="drop-features" class="dropdown-content absolute left-0 top-full mt-2 w-64 bg-white border border-neutral-200 rounded-xl shadow-2xl p-3 z-50 space-y-2">
-                            <div class="p-2 hover:bg-neutral-100 rounded-lg cursor-pointer text-sm font-medium text-neutral-800">Dynamic QR Codes</div>
-                            <div class="p-2 hover:bg-neutral-100 rounded-lg cursor-pointer text-sm font-medium text-neutral-800">Colored QR Codes</div>
+                        <div id="drop-features" class="dropdown-menu glass-dropdown absolute left-0 top-full mt-2 w-64 rounded-2xl p-3 z-50 space-y-2">
+                            <div class="p-2.5 hover:bg-white/10 rounded-xl cursor-pointer">
+                                <div class="text-xs font-bold text-white">Dynamic QR Codes</div>
+                                <div class="text-[11px] text-slate-400">Edit links anytime</div>
+                            </div>
+                            <div class="p-2.5 hover:bg-white/10 rounded-xl cursor-pointer">
+                                <div class="text-xs font-bold text-white">Custom Styles</div>
+                                <div class="text-[11px] text-slate-400">Custom colors & themes</div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Dropdown: Resources -->
                     <div class="relative">
-                        <button onclick="toggleDropdown(event, 'drop-resources')" class="flex items-center gap-1 whitespace-nowrap text-sm xl:text-base transition-colors text-neutral-700 hover:text-black focus:outline-none">
-                            Resources <i class="fa-solid fa-chevron-down text-xs"></i>
+                        <button onclick="toggleDropdown(event, 'drop-resources')" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-colors">
+                            <span>Resources</span> <i class="fa-solid fa-chevron-down text-xs opacity-70"></i>
                         </button>
-                        <div id="drop-resources" class="dropdown-content absolute left-0 top-full mt-2 w-64 bg-white border border-neutral-200 rounded-xl shadow-2xl p-3 z-50 space-y-2">
-                            <div class="p-2 hover:bg-neutral-100 rounded-lg cursor-pointer text-sm font-medium text-neutral-800">Blog & Guides</div>
+                        <div id="drop-resources" class="dropdown-menu glass-dropdown absolute left-0 top-full mt-2 w-64 rounded-2xl p-3 z-50 space-y-2">
+                            <div class="p-2.5 hover:bg-white/10 rounded-xl cursor-pointer">
+                                <div class="text-xs font-bold text-white">Blog & Guides</div>
+                            </div>
                         </div>
                     </div>
                 </nav>
             </div>
 
             <div class="flex items-center gap-2">
-                <a href="#" onclick="openScanner()" class="inline-flex items-center justify-center font-semibold rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 px-4 py-1.5 text-sm">Scan QR</a>
+                <button onclick="openScanner()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold shadow-lg shadow-purple-500/25 hover:brightness-110 transition-all">
+                    <i class="fa-solid fa-camera mr-1"></i> Scan
+                </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Hero & Widget Section -->
-    <main class="flex-grow py-8 px-4">
+    <!-- Main Hero & Glass Widget Section -->
+    <main class="flex-grow py-10 px-4">
         <div class="mx-auto max-w-[1205px]">
-            <div class="flex flex-col items-center gap-3">
+            <div class="flex flex-col items-center gap-6">
                 
-                <!-- Heading -->
-                <div class="order-2 lg:order-1 text-center">
-                    <h1 class="mt-8 lg:mt-0 mb-4 text-[26px] font-medium text-neutral-900 md:text-4xl">The QR Code Generator (TQRCG)</h1>
-                    <p class="mb-8 text-lg text-neutral-600 md:text-xl">All-in-one tool to create free QR Codes, edit them, and customize easily.</p>
+                <!-- Hero Heading -->
+                <div class="text-center">
+                    <h1 class="text-3xl md:text-5xl font-extrabold text-white mb-3">Surajit QR Code Helper</h1>
+                    <p class="text-slate-300 text-sm md:text-lg">All-in-one glassmorphic QR generator with custom styling & live preview.</p>
                 </div>
 
-                <!-- Dark Widget Container -->
-                <div class="order-1 lg:order-2 w-full max-w-[1205px]">
-                    <div class="bg-[#1E1E1E] rounded-[20px] overflow-hidden w-full max-w-[1205px] mx-auto shadow-2xl relative">
-                        <div class="flex flex-col min-[700px]:flex-row min-h-[460px] pt-4 px-0 pb-0 min-[700px]:p-6">
+                <!-- Main Glass Widget Container -->
+                <div class="w-full max-w-[1205px]">
+                    <div class="glass-widget rounded-3xl overflow-hidden w-full relative">
+                        <div class="flex flex-col min-[700px]:flex-row min-h-[460px] p-6 lg:p-8">
                             
-                            <!-- Left Controls Area -->
-                            <div class="w-full min-[700px]:w-[63.3%] relative flex flex-col justify-between">
+                            <!-- Left Control Options -->
+                            <div class="w-full min-[700px]:w-[63.3%] relative flex flex-col justify-between pr-0 min-[700px]:pr-6">
                                 <div>
-                                    <!-- Top Horizontal Category Buttons -->
-                                    <div class="relative">
-                                        <div id="tabs-container" class="flex overflow-x-auto px-5 pt-[10px] pb-[10px] gap-[25px] min-[700px]:px-6 min-[700px]:pt-5 min-[700px]:pb-0 min-[700px]:justify-between scrollbar-hide">
-                                            <button onclick="selectTab('url')" id="btn-tab-url" class="tab-btn shrink-0 flex flex-col items-center gap-[5px] px-[10px] py-[10px] rounded-[6px] text-[12px] font-medium whitespace-nowrap transition-colors bg-white/10 text-[#e7ffd3]">
-                                                <i class="fa-solid fa-link text-lg"></i><span>URL</span>
+                                    <!-- Horizontal Tab Selector -->
+                                    <div class="relative mb-6">
+                                        <div id="tabs-container" class="flex overflow-x-auto pb-2 gap-3 border-b border-white/10 scrollbar-hide">
+                                            <button onclick="selectTab('url')" id="btn-tab-url" class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                                                <i class="fa-solid fa-link text-sm"></i> <span>URL</span>
                                             </button>
-                                            <button onclick="selectTab('contact')" id="btn-tab-contact" class="tab-btn shrink-0 flex flex-col items-center gap-[5px] px-[10px] py-[10px] rounded-[6px] text-[12px] font-medium whitespace-nowrap transition-colors text-[#BEF392] hover:bg-white/5">
-                                                <i class="fa-solid fa-address-book text-lg"></i><span>Contact</span>
+                                            <button onclick="selectTab('contact')" id="btn-tab-contact" class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-white/10 transition-all">
+                                                <i class="fa-solid fa-address-book text-sm"></i> <span>Contact</span>
                                             </button>
-                                            <button onclick="selectTab('text')" id="btn-tab-text" class="tab-btn shrink-0 flex flex-col items-center gap-[5px] px-[10px] py-[10px] rounded-[6px] text-[12px] font-medium whitespace-nowrap transition-colors text-[#BEF392] hover:bg-white/5">
-                                                <i class="fa-solid fa-align-left text-lg"></i><span>Plain Text</span>
+                                            <button onclick="selectTab('text')" id="btn-tab-text" class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-white/10 transition-all">
+                                                <i class="fa-solid fa-align-left text-sm"></i> <span>Plain Text</span>
                                             </button>
-                                            <button onclick="selectTab('email')" id="btn-tab-email" class="tab-btn shrink-0 flex flex-col items-center gap-[5px] px-[10px] py-[10px] rounded-[6px] text-[12px] font-medium whitespace-nowrap transition-colors text-[#BEF392] hover:bg-white/5">
-                                                <i class="fa-solid fa-envelope text-lg"></i><span>Email</span>
+                                            <button onclick="selectTab('email')" id="btn-tab-email" class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-white/10 transition-all">
+                                                <i class="fa-solid fa-envelope text-sm"></i> <span>Email</span>
                                             </button>
                                         </div>
                                     </div>
 
-                                    <!-- Dynamic Inputs Container -->
-                                    <div class="flex-1 px-6 pt-5 pb-6 flex flex-col gap-[9px] min-[700px]:pt-[25px]">
-                                        <p id="widget-label" class="text-sm font-semibold text-white min-[700px]:text-[20px]">Redirect to an existing web URL</p>
-                                        <div class="flex-1 mt-2">
-                                            <div id="dynamic-input-area" class="flex flex-col gap-3">
-                                                <!-- Injected dynamically -->
-                                            </div>
+                                    <!-- Dynamic Inputs Box -->
+                                    <div class="space-y-4">
+                                        <p id="widget-label" class="text-base font-bold text-white">Redirect to an existing web URL</p>
+                                        <div id="dynamic-input-area" class="space-y-3">
+                                            <!-- Inputs loaded dynamically -->
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Color Customization & Bottom Toggles inside widget -->
-                                <div class="px-6 pb-6 pt-2 flex flex-col gap-4 border-t border-white/10 mt-4">
+                                <!-- Bottom Toggles & Color Selection -->
+                                <div class="pt-6 border-t border-white/10 mt-6 space-y-4">
                                     <div class="flex items-center gap-6">
                                         <label class="flex items-center gap-2 cursor-pointer">
-                                            <input type="checkbox" class="rounded bg-neutral-800 border-neutral-600 text-emerald-500 focus:ring-0">
-                                            <span class="text-xs text-white/80">Track your scans</span>
+                                            <input type="checkbox" class="rounded bg-slate-900 border-white/20 text-purple-500 focus:ring-0">
+                                            <span class="text-xs text-slate-300">Track your scans</span>
                                         </label>
                                         <label class="flex items-center gap-2 cursor-pointer">
-                                            <input type="checkbox" class="rounded bg-neutral-800 border-neutral-600 text-emerald-500 focus:ring-0">
-                                            <span class="text-xs text-white/80">Remove watermark</span>
+                                            <input type="checkbox" class="rounded bg-slate-900 border-white/20 text-purple-500 focus:ring-0">
+                                            <span class="text-xs text-slate-300">Remove watermark</span>
                                         </label>
                                     </div>
-                                    <div class="flex items-center gap-4">
-                                        <div class="flex items-center gap-2">
-                                            <label class="text-xs text-white/70">QR Color:</label>
-                                            <input type="color" id="fg-color" value="#000000" onchange="generateQR()" class="w-7 h-7 rounded bg-transparent cursor-pointer border border-white/30 p-0.5">
+
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="text-[11px] text-slate-400 block mb-1">Foreground Color</label>
+                                            <input type="color" id="fg-color" value="#000000" onchange="generateQR()" class="w-full h-9 rounded-xl bg-slate-900 p-1 border border-white/20 cursor-pointer">
                                         </div>
-                                        <div class="flex items-center gap-2">
-                                            <label class="text-xs text-white/70">BG Color:</label>
-                                            <input type="color" id="bg-color" value="#ffffff" onchange="generateQR()" class="w-7 h-7 rounded bg-transparent cursor-pointer border border-white/30 p-0.5">
+                                        <div>
+                                            <label class="text-[11px] text-slate-400 block mb-1">Background Color</label>
+                                            <input type="color" id="bg-color" value="#ffffff" onchange="generateQR()" class="w-full h-9 rounded-xl bg-slate-900 p-1 border border-white/20 cursor-pointer">
                                         </div>
                                     </div>
                                 </div>
 
                             </div>
 
-                            <!-- Right QR Preview & Download Area -->
-                            <div class="w-full min-[700px]:w-[36.7%] px-8 pt-[17px] pb-6 flex flex-col items-center justify-between border-t min-[700px]:border-t-0 min-[700px]:border-l border-white/10">
-                                <p class="text-sm text-white font-medium mb-3 text-center">Live QR Preview</p>
-                                
-                                <div class="flex items-center justify-center w-full">
-                                    <div class="relative bg-white border-2 border-black/10 rounded-lg p-3 aspect-square flex items-center justify-center shadow-lg" style="width: 75%;">
-                                        <div id="qr-code-canvas"></div>
-                                    </div>
+                            <!-- Right Live Canvas Preview Area -->
+                            <div class="w-full min-[700px]:w-[36.7%] pt-6 min-[700px]:pt-0 pl-0 min-[700px]:pl-6 border-t min-[700px]:border-t-0 min-[700px]:border-l border-white/10 flex flex-col items-center justify-between">
+                                <div class="text-xs font-bold text-slate-400 mb-4 flex items-center space-x-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    <span>Live Glass Preview</span>
                                 </div>
 
-                                <!-- Action Buttons (Download PNG, JPG, SVG) -->
-                                <div class="flex items-center gap-2 mt-6 w-full">
-                                    <button onclick="downloadQR('png')" class="h-12 px-3 rounded text-sm font-bold text-white transition-colors flex-1 bg-emerald-600 hover:bg-emerald-500">PNG</button>
-                                    <button onclick="downloadQR('jpeg')" class="h-12 px-3 rounded text-sm font-bold text-white transition-colors flex-1 bg-white/20 hover:bg-white/30">JPG</button>
-                                    <button onclick="downloadQR('svg')" class="h-12 px-3 rounded text-sm font-bold text-white transition-colors flex-1 bg-white/20 hover:bg-white/30">SVG</button>
+                                <div class="bg-white p-5 rounded-2xl shadow-2xl flex items-center justify-center border-2 border-white/20">
+                                    <div id="qr-code-canvas"></div>
+                                </div>
+
+                                <!-- Downloads Grid -->
+                                <div class="w-full grid grid-cols-3 gap-2 mt-6">
+                                    <button onclick="downloadQR('png')" class="py-3 px-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:brightness-110 text-white rounded-xl text-xs font-bold shadow-lg transition-all">PNG</button>
+                                    <button onclick="downloadQR('jpeg')" class="py-3 px-2 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold transition-all">JPG</button>
+                                    <button onclick="downloadQR('svg')" class="py-3 px-2 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold transition-all">SVG</button>
                                 </div>
                             </div>
 
@@ -208,18 +307,19 @@
         </div>
     </main>
 
-    <!-- Scanner Modal -->
-    <div id="scanner-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 text-center relative">
-            <button onclick="closeScanner()" class="absolute top-3 right-3 text-neutral-400 hover:text-neutral-600 text-xl font-bold">&times;</button>
-            <h3 class="text-lg font-bold text-neutral-900 mb-4">Scan QR Code</h3>
-            <div class="bg-neutral-100 rounded-xl h-48 flex items-center justify-center text-neutral-500 text-sm">
-                Camera Scanner Active
+    <!-- Scanner Glass Modal -->
+    <div id="scanner-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
+        <div class="glass-widget rounded-3xl max-w-md w-full p-6 text-center relative">
+            <button onclick="closeScanner()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
+            <h3 class="text-lg font-bold text-white mb-4"><i class="fa-solid fa-camera text-purple-400 mr-2"></i>QR Reader Stream</h3>
+            <div class="bg-slate-900/80 rounded-2xl h-52 flex flex-col items-center justify-center border border-white/10">
+                <i class="fa-solid fa-qrcode text-4xl text-purple-400/50 animate-pulse"></i>
+                <p class="text-xs text-slate-400 mt-2">Camera scanner active...</p>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript Logic -->
+    <!-- JavaScript Engine -->
     <script>
         let qrEngine = null;
         let activeTab = 'url';
@@ -228,7 +328,6 @@
             selectTab('url');
         });
 
-        // Dropdown toggle handler
         function toggleDropdown(event, id) {
             event.stopPropagation();
             const dropdown = document.getElementById(id);
@@ -240,7 +339,7 @@
         }
 
         function closeAllDropdowns() {
-            document.querySelectorAll('.dropdown-content').forEach(el => {
+            document.querySelectorAll('.dropdown-menu').forEach(el => {
                 el.classList.remove('show');
             });
         }
@@ -249,19 +348,17 @@
             closeAllDropdowns();
         });
 
-        // Tab switching handler
         function selectTab(tabKey) {
             activeTab = tabKey;
             closeAllDropdowns();
 
-            // Highlight active button
             ['url', 'contact', 'text', 'email'].forEach(key => {
                 const btn = document.getElementById(`btn-tab-${key}`);
                 if (btn) {
                     if (key === tabKey) {
-                        btn.className = 'tab-btn shrink-0 flex flex-col items-center gap-[5px] px-[10px] py-[10px] rounded-[6px] text-[12px] font-medium whitespace-nowrap transition-colors bg-white/10 text-[#e7ffd3]';
+                        btn.className = 'tab-btn flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all bg-purple-500/20 text-purple-300 border border-purple-500/30';
                     } else {
-                        btn.className = 'tab-btn shrink-0 flex flex-col items-center gap-[5px] px-[10px] py-[10px] rounded-[6px] text-[12px] font-medium whitespace-nowrap transition-colors text-[#BEF392] hover:bg-white/5';
+                        btn.className = 'tab-btn flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:bg-white/10 transition-all';
                     }
                 }
             });
@@ -273,34 +370,30 @@
             if (tabKey === 'url') {
                 label.innerText = 'Redirect to an existing web URL';
                 area.innerHTML = `
-                    <div class="relative mt-2">
-                        <input type="url" id="input-val" oninput="generateQR()" placeholder="Enter URL" value="https://github.com/grow4u555-ui/qrcode" class="w-full rounded-full bg-white text-black pl-4 pr-4 py-2.5 text-base outline-none">
-                    </div>
-                    <sub class="text-sm font-normal text-white/70">Try something like https://example.com/</sub>
+                    <input type="url" id="input-val" oninput="generateQR()" placeholder="Enter URL" value="https://github.com/grow4u555-ui/qrcode" class="w-full glass-input p-3.5 rounded-2xl text-xs outline-none">
                 `;
             } else if (tabKey === 'contact') {
                 label.innerText = 'Create Contact Card (vCard)';
                 area.innerHTML = `
-                    <input type="text" id="v-name" oninput="generateQR()" placeholder="Full Name" value="Surajit" class="w-full rounded-xl bg-white text-black px-4 py-2 text-sm outline-none mb-2">
-                    <input type="text" id="v-phone" oninput="generateQR()" placeholder="Phone Number" value="+919876543210" class="w-full rounded-xl bg-white text-black px-4 py-2 text-sm outline-none">
+                    <input type="text" id="v-name" oninput="generateQR()" placeholder="Full Name" value="Surajit" class="w-full glass-input p-3 rounded-xl text-xs outline-none">
+                    <input type="text" id="v-phone" oninput="generateQR()" placeholder="Phone Number" value="+919876543210" class="w-full glass-input p-3 rounded-xl text-xs outline-none">
                 `;
             } else if (tabKey === 'text') {
                 label.innerText = 'Enter Plain Text';
                 area.innerHTML = `
-                    <textarea id="input-val" oninput="generateQR()" rows="3" placeholder="Enter text..." class="w-full rounded-xl bg-white text-black p-3 text-sm outline-none">Surajit QR Code Helper</textarea>
+                    <textarea id="input-val" oninput="generateQR()" rows="3" placeholder="Enter text..." class="w-full glass-input p-3 rounded-xl text-xs outline-none">Surajit QR Code Helper</textarea>
                 `;
             } else if (tabKey === 'email') {
-                label.innerText = 'Send an Email';
+                label.innerText = 'Send Email Message';
                 area.innerHTML = `
-                    <input type="email" id="e-addr" oninput="generateQR()" placeholder="Email Address" value="surajit@example.com" class="w-full rounded-xl bg-white text-black px-4 py-2 text-sm outline-none mb-2">
-                    <input type="text" id="e-sub" oninput="generateQR()" placeholder="Subject" value="Hello" class="w-full rounded-xl bg-white text-black px-4 py-2 text-sm outline-none">
+                    <input type="email" id="e-addr" oninput="generateQR()" placeholder="Email Address" value="surajit@example.com" class="w-full glass-input p-3 rounded-xl text-xs outline-none">
+                    <input type="text" id="e-sub" oninput="generateQR()" placeholder="Subject" value="Hello" class="w-full glass-input p-3 rounded-xl text-xs outline-none">
                 `;
             }
 
             generateQR();
         }
 
-        // Get payload based on active tab
         function getPayload() {
             if (activeTab === 'url' || activeTab === 'text') {
                 return document.getElementById('input-val')?.value || 'https://github.com/grow4u555-ui/qrcode';
@@ -316,7 +409,6 @@
             return 'Surajit QR Code Helper';
         }
 
-        // Generate QR code on canvas
         function generateQR() {
             const container = document.getElementById('qr-code-canvas');
             if (!container) return;
@@ -338,20 +430,14 @@
             qrEngine.append(container);
         }
 
-        // Download QR
         function downloadQR(ext) {
             if (qrEngine) {
                 qrEngine.download({ name: 'surajit-qr', extension: ext });
             }
         }
 
-        // Modal triggers
-        function openScanner() {
-            document.getElementById('scanner-modal').classList.remove('hidden');
-        }
-        function closeScanner() {
-            document.getElementById('scanner-modal').classList.add('hidden');
-        }
+        function openScanner() { document.getElementById('scanner-modal').classList.remove('hidden'); }
+        function closeScanner() { document.getElementById('scanner-modal').classList.add('hidden'); }
     </script>
 </body>
 </html>
