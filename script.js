@@ -1,105 +1,151 @@
-let qrEngine = null;
-let currentType = 'url';
+let qrStyling = null;
+let activeCategoryGroup = 'communication';
+let activeOption = 'text';
+
+const categoriesData = {
+    communication: [
+        { id: 'text', name: 'Text / URL', icon: 'fa-align-left', color: 'text-purple-400' },
+        { id: 'vcard', name: 'vCard', icon: 'fa-address-card', color: 'text-emerald-400' },
+        { id: 'wifi', name: 'Wi-Fi', icon: 'fa-wifi', color: 'text-blue-400' }
+    ],
+    social: [
+        { id: 'instagram', name: 'Instagram', icon: 'fa-instagram', color: 'text-pink-400', isBrand: true },
+        { id: 'facebook', name: 'Facebook', icon: 'fa-facebook', color: 'text-blue-500', isBrand: true }
+    ]
+};
 
 document.addEventListener('DOMContentLoaded', () => {
-    selectType('url');
+    switchCategoryGroup('communication');
 });
 
-function toggleDropdown(id) {
-    const target = document.getElementById(id);
-    const isOpen = target.classList.contains('show');
+// Dropdown click handler
+function toggleDropdown(event, dropdownId) {
+    event.stopPropagation();
+    const dropdown = document.getElementById(dropdownId);
+    const isOpen = dropdown.classList.contains('show');
     
     closeAllDropdowns();
 
     if (!isOpen) {
-        target.classList.add('show');
+        dropdown.classList.add('show');
     }
 }
 
 function closeAllDropdowns() {
-    document.querySelectorAll('.dropdown-content').forEach(el => {
-        el.classList.remove('show');
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        menu.classList.remove('show');
     });
 }
 
-document.addEventListener('click', (e) => {
-    if (!e.target.closest('.relative')) {
-        closeAllDropdowns();
-    }
+document.addEventListener('click', () => {
+    closeAllDropdowns();
 });
 
-function selectType(type) {
-    currentType = type;
-    closeAllDropdowns();
+function switchCategoryGroup(groupKey) {
+    activeCategoryGroup = groupKey;
+    document.querySelectorAll('.cat-group-btn').forEach(btn => {
+        btn.className = 'cat-group-btn w-full flex items-center justify-between p-3 rounded-xl text-left text-sm font-semibold text-slate-300 hover:bg-white/5 transition-all';
+    });
+    const activeGroupBtn = document.getElementById(`cat-btn-${groupKey}`);
+    if (activeGroupBtn) {
+        activeGroupBtn.className = 'cat-group-btn w-full flex items-center justify-between p-3 rounded-xl text-left text-sm font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30 transition-all';
+    }
+    renderSubOptions();
+}
 
-    const titleEl = document.getElementById('active-type-title');
-    const container = document.getElementById('input-fields-container');
+function renderSubOptions() {
+    const container = document.getElementById('sub-options-container');
+    if (!container) return;
     container.innerHTML = '';
 
-    if (type === 'url') {
-        titleEl.innerText = 'Redirect to an existing web URL';
-        container.innerHTML = `
-            <input type="url" id="val-url" oninput="generateQR()" placeholder="Enter URL" value="https://github.com/grow4u555-ui/qrcode" class="w-full rounded-full bg-white text-black px-4 py-2.5 text-sm outline-none">
+    const list = categoriesData[activeCategoryGroup] || [];
+    list.forEach((opt, idx) => {
+        if (idx === 0) activeOption = opt.id;
+        const card = document.createElement('button');
+        card.onclick = () => selectOption(opt.id, opt.name);
+        const fontClass = opt.isBrand ? 'fa-brands' : 'fa-solid';
+        card.className = `p-3 rounded-xl glass-card flex items-center space-x-2.5 text-xs font-semibold hover:border-purple-500/40 transition-all text-left`;
+        card.innerHTML = `
+            <i class="${fontClass} ${opt.icon} ${opt.color} text-base"></i>
+            <span class="text-slate-200">${opt.name}</span>
         `;
-    } else if (type === 'vcard') {
-        titleEl.innerText = 'Create Contact Card (vCard)';
-        container.innerHTML = `
-            <input type="text" id="val-name" oninput="generateQR()" placeholder="Full Name" value="Surajit" class="w-full rounded-xl bg-white text-black p-2.5 text-sm outline-none mb-2">
-            <input type="text" id="val-phone" oninput="generateQR()" placeholder="Phone" value="+919876543210" class="w-full rounded-xl bg-white text-black p-2.5 text-sm outline-none">
+        container.appendChild(card);
+    });
+
+    if (list.length > 0) {
+        selectOption(list[0].id, list[0].name);
+    }
+}
+
+function selectOption(optId, optName) {
+    activeOption = optId;
+    document.getElementById('active-option-title').innerText = optName;
+
+    const area = document.getElementById('dynamic-inputs-area');
+    area.innerHTML = '';
+
+    if (optId === 'text') {
+        area.innerHTML = `<textarea id="input-text" oninput="renderQR()" rows="3" placeholder="Enter URL or text..." class="w-full glass-input p-3 rounded-xl text-xs">https://github.com/grow4u555-ui/qrcode</textarea>`;
+    } else if (optId === 'vcard') {
+        area.innerHTML = `
+            <input type="text" id="vcard-name" oninput="renderQR()" placeholder="Full Name" value="Surajit" class="w-full glass-input p-2.5 rounded-xl text-xs mb-2">
+            <input type="text" id="vcard-phone" oninput="renderQR()" placeholder="Phone" value="+919876543210" class="w-full glass-input p-2.5 rounded-xl text-xs">
         `;
-    } else if (type === 'wifi') {
-        titleEl.innerText = 'Wi-Fi Connection Details';
-        container.innerHTML = `
-            <input type="text" id="val-ssid" oninput="generateQR()" placeholder="Network SSID" value="HomeWiFi" class="w-full rounded-xl bg-white text-black p-2.5 text-sm outline-none mb-2">
-            <input type="password" id="val-pass" oninput="generateQR()" placeholder="Password" value="12345678" class="w-full rounded-xl bg-white text-black p-2.5 text-sm outline-none">
-        `;
-    } else if (type === 'email') {
-        titleEl.innerText = 'Send Email Message';
-        container.innerHTML = `
-            <input type="email" id="val-email" oninput="generateQR()" placeholder="Email Address" value="surajit@example.com" class="w-full rounded-xl bg-white text-black p-2.5 text-sm outline-none mb-2">
-            <input type="text" id="val-sub" oninput="generateQR()" placeholder="Subject" value="Hello" class="w-full rounded-xl bg-white text-black p-2.5 text-sm outline-none">
+    } else if (optId === 'wifi') {
+        area.innerHTML = `
+            <input type="text" id="wifi-ssid" oninput="renderQR()" placeholder="Wi-Fi SSID" value="MyHomeNetwork" class="w-full glass-input p-2.5 rounded-xl text-xs mb-2">
+            <input type="password" id="wifi-pass" oninput="renderQR()" placeholder="Password" value="password123" class="w-full glass-input p-2.5 rounded-xl text-xs">
         `;
     } else {
-        titleEl.innerText = 'Plain Text Data';
-        container.innerHTML = `
-            <textarea id="val-text" oninput="generateQR()" rows="3" placeholder="Enter text..." class="w-full rounded-xl bg-white text-black p-2.5 text-sm outline-none">Surajit QR Code Helper</textarea>
-        `;
+        area.innerHTML = `<input type="text" id="input-general" oninput="renderQR()" placeholder="Enter details..." value="https://github.com/grow4u555-ui/qrcode" class="w-full glass-input p-3 rounded-xl text-xs">`;
     }
 
-    generateQR();
+    renderQR();
 }
 
 function getPayload() {
-    if (currentType === 'url') return document.getElementById('val-url')?.value || 'https://github.com/grow4u555-ui/qrcode';
-    if (currentType === 'vcard') return `BEGIN:VCARD\nN:${document.getElementById('val-name')?.value}\nTEL:${document.getElementById('val-phone')?.value}\nEND:VCARD`;
-    if (currentType === 'wifi') return `WIFI:S:${document.getElementById('val-ssid')?.value};T:WPA;P:${document.getElementById('val-pass')?.value};;`;
-    if (currentType === 'email') return `mailto:${document.getElementById('val-email')?.value}?subject=${document.getElementById('val-sub')?.value}`;
-    return document.getElementById('val-text')?.value || 'Surajit QR Helper';
+    if (activeOption === 'text') {
+        return document.getElementById('input-text')?.value || 'https://github.com/grow4u555-ui/qrcode';
+    } else if (activeOption === 'vcard') {
+        const n = document.getElementById('vcard-name')?.value || '';
+        const p = document.getElementById('vcard-phone')?.value || '';
+        return `BEGIN:VCARD\nVERSION:3.0\nN:${n}\nTEL:${p}\nEND:VCARD`;
+    } else if (activeOption === 'wifi') {
+        const s = document.getElementById('wifi-ssid')?.value || '';
+        const p = document.getElementById('wifi-pass')?.value || '';
+        return `WIFI:S:${s};T:WPA;P:${p};;`;
+    }
+    return document.getElementById('input-general')?.value || 'Surajit QR Code Helper';
 }
 
-function generateQR() {
-    const target = document.getElementById('canvas-target');
+function renderQR() {
+    const target = document.getElementById('qr-code-canvas');
     if (!target) return;
     target.innerHTML = '';
 
-    const fg = document.getElementById('qr-color')?.value || '#000000';
+    const fg = document.getElementById('fg-color')?.value || '#000000';
     const bg = document.getElementById('bg-color')?.value || '#ffffff';
+    const payload = getPayload();
 
-    qrEngine = new QRCodeStyling({
-        width: 180,
-        height: 180,
+    qrStyling = new QRCodeStyling({
+        width: 200,
+        height: 200,
         type: 'canvas',
-        data: getPayload(),
+        data: payload,
         dotsOptions: { color: fg, type: 'rounded' },
         backgroundOptions: { color: bg }
     });
 
-    qrEngine.append(target);
+    qrStyling.append(target);
 }
 
 function downloadQR(ext) {
-    if (qrEngine) qrEngine.download({ name: 'surajit-qr', extension: ext });
+    if (qrStyling) {
+        qrStyling.download({ name: 'surajit-qr-code', extension: ext });
+    }
 }
 
-function openModal() { document.getElementById('scan-modal').classList.remove('hidden'); }
-function closeModal() { document.getElementById('scan-modal').classList.add('hidden'); }
+function toggleScannerModal() {
+    const modal = document.getElementById('scanner-modal');
+    modal.classList.toggle('hidden');
+}
