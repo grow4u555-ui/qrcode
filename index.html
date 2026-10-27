@@ -91,6 +91,12 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
+    <!-- Toast Notification Banner -->
+    <div id="toast-banner" class="fixed top-20 right-6 z-50 transform translate-y-[-200%] transition-transform duration-300 bg-purple-600 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-semibold flex items-center gap-2">
+        <i class="fa-solid fa-circle-check text-emerald-300"></i>
+        <span id="toast-msg">Action successful</span>
+    </div>
+
     <!-- Header Section -->
     <header class="sticky top-0 z-50 glass-header px-4 lg:px-8 py-3.5">
         <div class="flex items-center justify-between px-2 max-w-[1400px] mx-auto">
@@ -169,12 +175,12 @@
                             <span>Industries</span> <i class="fa-solid fa-chevron-down text-xs opacity-70"></i>
                         </button>
                         <div id="drop-industries" class="dropdown-menu glass-dropdown absolute left-0 top-full mt-2 w-64 rounded-2xl p-3 z-50 space-y-2">
-                            <div class="p-2.5 hover:bg-white/10 rounded-xl cursor-pointer">
-                                <div class="text-xs font-bold text-white">Restaurants & Cafes</div>
+                            <div onclick="applyPreset('https://restaurant-menu-sample.com', 'Restaurant Digital Menu Selected'); closeAllDropdowns();" class="p-2.5 hover:bg-white/10 rounded-xl cursor-pointer">
+                                <div class="text-xs font-bold text-white"><i class="fa-solid fa-utensils text-amber-400 mr-1.5"></i> Restaurants & Cafes</div>
                                 <div class="text-[11px] text-slate-400">Digital menus & orders</div>
                             </div>
-                            <div class="p-2.5 hover:bg-white/10 rounded-xl cursor-pointer">
-                                <div class="text-xs font-bold text-white">Real Estate</div>
+                            <div onclick="applyPreset('https://realestate-property-tour.com', 'Real Estate Property Tour Selected'); closeAllDropdowns();" class="p-2.5 hover:bg-white/10 rounded-xl cursor-pointer">
+                                <div class="text-xs font-bold text-white"><i class="fa-solid fa-building text-blue-400 mr-1.5"></i> Real Estate</div>
                                 <div class="text-[11px] text-slate-400">Listings & property tours</div>
                             </div>
                         </div>
@@ -186,12 +192,12 @@
                             <span>Features</span> <i class="fa-solid fa-chevron-down text-xs opacity-70"></i>
                         </button>
                         <div id="drop-features" class="dropdown-menu glass-dropdown absolute left-0 top-full mt-2 w-64 rounded-2xl p-3 z-50 space-y-2">
-                            <div class="p-2.5 hover:bg-white/10 rounded-xl cursor-pointer">
-                                <div class="text-xs font-bold text-white">Dynamic QR Codes</div>
+                            <div onclick="showToast('Dynamic QR mode activated'); closeAllDropdowns();" class="p-2.5 hover:bg-white/10 rounded-xl cursor-pointer">
+                                <div class="text-xs font-bold text-white"><i class="fa-solid fa-bolt text-yellow-400 mr-1.5"></i> Dynamic QR Codes</div>
                                 <div class="text-[11px] text-slate-400">Edit links anytime</div>
                             </div>
-                            <div class="p-2.5 hover:bg-white/10 rounded-xl cursor-pointer">
-                                <div class="text-xs font-bold text-white">Custom Styles</div>
+                            <div onclick="showToast('Custom Styling tools ready below'); closeAllDropdowns();" class="p-2.5 hover:bg-white/10 rounded-xl cursor-pointer">
+                                <div class="text-xs font-bold text-white"><i class="fa-solid fa-palette text-purple-400 mr-1.5"></i> Custom Styles</div>
                                 <div class="text-[11px] text-slate-400">Custom colors & themes</div>
                             </div>
                         </div>
@@ -203,8 +209,9 @@
                             <span>Resources</span> <i class="fa-solid fa-chevron-down text-xs opacity-70"></i>
                         </button>
                         <div id="drop-resources" class="dropdown-menu glass-dropdown absolute left-0 top-full mt-2 w-64 rounded-2xl p-3 z-50 space-y-2">
-                            <div class="p-2.5 hover:bg-white/10 rounded-xl cursor-pointer">
-                                <div class="text-xs font-bold text-white">Blog & Guides</div>
+                            <div onclick="showToast('Opening documentation & guides'); closeAllDropdowns();" class="p-2.5 hover:bg-white/10 rounded-xl cursor-pointer">
+                                <div class="text-xs font-bold text-white"><i class="fa-solid fa-book-open text-emerald-400 mr-1.5"></i> Blog & Guides</div>
+                                <div class="text-[11px] text-slate-400">Best practices & tips</div>
                             </div>
                         </div>
                     </div>
@@ -362,9 +369,33 @@
             });
         }
 
-        document.addEventListener('click', () => {
-            closeAllDropdowns();
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.relative')) {
+                closeAllDropdowns();
+            }
         });
+
+        function showToast(msg) {
+            const banner = document.getElementById('toast-banner');
+            const text = document.getElementById('toast-msg');
+            text.innerText = msg;
+            banner.classList.remove('translate-y-[-200%]');
+            setTimeout(() => {
+                banner.classList.add('translate-y-[-200%]');
+            }, 3000);
+        }
+
+        function applyPreset(urlVal, msg) {
+            selectTab('url');
+            setTimeout(() => {
+                const input = document.getElementById('input-url');
+                if (input) {
+                    input.value = urlVal;
+                    generateQR();
+                }
+            }, 50);
+            showToast(msg);
+        }
 
         function selectTab(tabKey) {
             activeTab = tabKey;
@@ -469,6 +500,7 @@
         function downloadQR(ext) {
             if (qrEngine) {
                 qrEngine.download({ name: 'surajit-qr', extension: ext });
+                showToast(`Downloaded QR Code as .${ext.toUpperCase()}`);
             }
         }
 
