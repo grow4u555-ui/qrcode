@@ -81,7 +81,7 @@
         <span id="toast-msg">Action Executed</span>
     </div>
 
-    <!-- Header Navigation (Fixed Overflow Issue) -->
+    <!-- Header Navigation -->
     <header class="sticky top-0 z-50 glass-header px-4 py-3.5">
         <div class="flex items-center justify-between max-w-[1400px] mx-auto w-full">
             <div class="flex items-center gap-3 lg:gap-6">
@@ -273,7 +273,7 @@
 
                     </div>
 
-                    <!-- Right Section: Canvas + 3 Style Thumbnails + Action Bar -->
+                    <!-- Right Section: Canvas + 3 Style Thumbnails (Guaranteed Render) + Action Bar -->
                     <div class="w-full min-[700px]:w-[38%] pt-6 min-[700px]:pt-0 pl-0 min-[700px]:pl-6 border-t min-[700px]:border-t-0 min-[700px]:border-l border-white/10 flex flex-col justify-between items-center">
                         
                         <p class="text-xs text-slate-400 font-medium text-center mb-3">To enable tracking, <a href="#" onclick="showToast('Create Dynamic QR Activated')" class="underline text-purple-400 hover:text-purple-300">create a Dynamic QR Code</a></p>
@@ -285,16 +285,19 @@
                                 <div id="qr-code-canvas"></div>
                             </div>
 
-                            <!-- 3 Preset Logo / Style Thumbnails -->
+                            <!-- 3 Preset Style Thumbnails (Guaranteed Visuals) -->
                             <div class="w-[20%] flex flex-col gap-3 items-center">
-                                <button onclick="selectTemplate('default')" id="tpl-default" class="w-full aspect-square rounded-xl border-2 border-purple-500 p-1.5 bg-white hover:scale-105 transition-all shadow-md">
-                                    <img src="https://api.iconify.design/ri:qr-code-line.svg" class="w-full h-full object-contain">
+                                <button onclick="selectTemplate('default')" id="tpl-default" title="Standard QR" class="w-full aspect-square rounded-xl border-2 border-purple-500 p-2 bg-slate-800 text-white flex flex-col items-center justify-center hover:scale-105 transition-all shadow-md">
+                                    <i class="fa-solid fa-qrcode text-lg text-purple-300"></i>
+                                    <span class="text-[9px] mt-0.5 font-bold">Plain</span>
                                 </button>
-                                <button onclick="selectTemplate('blue-logo')" id="tpl-blue-logo" class="w-full aspect-square rounded-xl border-2 border-white/20 p-1.5 bg-white hover:scale-105 transition-all shadow-md">
-                                    <img src="https://api.iconify.design/logos:google-icon.svg" class="w-full h-full object-contain">
+                                <button onclick="selectTemplate('blue-logo')" id="tpl-blue-logo" title="Google Style" class="w-full aspect-square rounded-xl border-2 border-white/20 p-2 bg-blue-600 text-white flex flex-col items-center justify-center hover:scale-105 transition-all shadow-md">
+                                    <i class="fa-brands fa-google text-lg"></i>
+                                    <span class="text-[9px] mt-0.5 font-bold">Google</span>
                                 </button>
-                                <button onclick="selectTemplate('red-logo')" id="tpl-red-logo" class="w-full aspect-square rounded-xl border-2 border-white/20 p-1.5 bg-white hover:scale-105 transition-all shadow-md">
-                                    <img src="https://api.iconify.design/logos:youtube-icon.svg" class="w-full h-full object-contain">
+                                <button onclick="selectTemplate('red-logo')" id="tpl-red-logo" title="YouTube Style" class="w-full aspect-square rounded-xl border-2 border-white/20 p-2 bg-red-600 text-white flex flex-col items-center justify-center hover:scale-105 transition-all shadow-md">
+                                    <i class="fa-brands fa-youtube text-lg"></i>
+                                    <span class="text-[9px] mt-0.5 font-bold">Tube</span>
                                 </button>
                             </div>
                         </div>
@@ -549,8 +552,8 @@
         }
 
         function selectTemplate(tpl) {
-            document.querySelectorAll('[id^="tpl-"]').forEach(el => el.className = 'w-full aspect-square rounded-xl border-2 border-white/20 p-1.5 bg-white hover:scale-105 transition-all shadow-md');
-            document.getElementById(`tpl-${tpl}`).className = 'w-full aspect-square rounded-xl border-2 border-purple-500 p-1.5 bg-white hover:scale-105 transition-all shadow-md';
+            document.querySelectorAll('[id^="tpl-"]').forEach(el => el.className = 'w-full aspect-square rounded-xl border-2 border-white/20 p-2 bg-slate-800 text-white flex flex-col items-center justify-center hover:scale-105 transition-all shadow-md');
+            document.getElementById(`tpl-${tpl}`).className = 'w-full aspect-square rounded-xl border-2 border-purple-500 p-2 bg-slate-800 text-white flex flex-col items-center justify-center hover:scale-105 transition-all shadow-md';
 
             if (tpl === 'blue-logo') {
                 currentLogo = 'https://api.iconify.design/logos:google-icon.svg';
