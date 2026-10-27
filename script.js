@@ -161,3 +161,28 @@ function toggleScannerModal() {
     const modal = document.getElementById('scanner-modal');
     modal.classList.toggle('hidden');
 }
+// Toggle specific dropdown on click
+function toggleDropdown(event, dropdownId) {
+    event.stopPropagation();
+    const dropdown = document.getElementById(dropdownId);
+    const isOpen = dropdown.classList.contains('show');
+    
+    // Close all open dropdowns first
+    closeAllDropdowns();
+
+    if (!isOpen) {
+        dropdown.classList.add('show');
+    }
+}
+
+// Close all dropdowns
+function closeAllDropdowns() {
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        menu.classList.remove('show');
+    });
+}
+
+// Close dropdown when clicking anywhere outside
+document.addEventListener('click', () => {
+    closeAllDropdowns();
+});
