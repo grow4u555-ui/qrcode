@@ -3,29 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glassmorphism QR Code Generator</title>
+    <title>Surajit QR Code Helper - Free Glassmorphic QR Generator & Scanner</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- QR Code Styling Library -->
+    <!-- QR Code Styling Engine -->
     <script type="text/javascript" src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
-    <!-- Google Font - Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- HTML5 QR Code Scanner for WebCam Scanning -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         * {
             font-family: 'Inter', sans-serif;
         }
 
-        /* Animated Gradient Background */
+        /* Rich Animated Gradient Background for Glassmorphism pop */
         body {
-            background: linear-gradient(-45deg, #0f172a, #1e1b4b, #311042, #111827);
-            background-size: 400% 400%;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 35%, #311042 70%, #0f172a 100%);
+            background-size: 200% 200%;
             animation: gradientBG 15s ease infinite;
             min-height: 100vh;
+            color: #f8fafc;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
 
         @keyframes gradientBG {
@@ -34,494 +36,718 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Glassmorphism Styles */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.07);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        /* Glassmorphism Navigation Bar */
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        /* Main Glass Card Container */
         .glass-card {
             background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 1.75rem;
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
+        /* Inner Glass Panel */
+        .glass-panel {
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 1.25rem;
+        }
+
+        /* Glass Tabs */
+        .glass-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.65rem 0.85rem;
+            border-radius: 0.85rem;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            min-width: 68px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glass-tab:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .glass-tab.active {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.4) 0%, rgba(59, 130, 246, 0.4) 100%);
+            color: #ffffff;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 20px rgba(168, 85, 247, 0.25);
+        }
+
+        /* Glass Input Field */
         .glass-input {
             background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #f8fafc;
-            transition: all 0.3s ease;
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 9999px;
+            padding: 0.9rem 1.5rem;
+            font-size: 0.95rem;
+            width: 100%;
+            outline: none;
+            transition: all 0.25s ease;
+            backdrop-filter: blur(8px);
+        }
+
+        .glass-input::placeholder {
+            color: #94a3b8;
         }
 
         .glass-input:focus {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: #6366f1;
-            outline: none;
-            box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+            background: rgba(255, 255, 255, 0.14);
+            border-color: #a855f7;
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.25);
         }
 
-        .glass-input option {
-            background-color: #0f172a;
-            color: #f8fafc;
+        /* Glass Modal Backdrop */
+        .modal-backdrop {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
-        /* Active Tab Highlight */
-        .tab-btn.active {
-            background: rgba(99, 102, 241, 0.35);
-            border-bottom: 2px solid #818cf8;
-            color: #ffffff;
-            font-weight: 600;
+        /* Style Thumbnails */
+        .qr-style-thumb {
+            border: 2px solid transparent;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.2);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.4);
+        .qr-style-thumb.selected {
+            border-color: #a855f7;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
         }
     </style>
 </head>
-<body class="p-4 md:p-8 flex items-center justify-center min-h-screen py-8 md:py-12">
+<body class="flex flex-col min-h-screen">
 
-    <div class="max-w-6xl w-full glass-panel rounded-3xl p-6 md:p-10 text-slate-100 my-auto">
-        
-        <!-- Header -->
-        <header class="text-center mb-8">
-            <h1 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight flex items-center justify-center gap-3">
-                <i class="fa-solid fa-qrcode text-indigo-400"></i> Glassmorphic QR Generator
-            </h1>
-            <p class="text-slate-300 text-sm md:text-base mt-2 font-medium">Create customized, high-definition & artistic QR codes directly in your browser</p>
-        </header>
-
-        <!-- Main Grid Layout -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-
-            <!-- Left Form Controls Panel -->
-            <div class="lg:col-span-7 space-y-6">
-
-                <!-- Navigation Tabs -->
-                <div class="flex flex-wrap gap-2 p-1.5 glass-card rounded-2xl justify-between">
-                    <button onclick="switchTab('text')" id="tab-text" class="tab-btn active flex-1 py-2.5 px-3 rounded-xl text-xs md:text-sm font-medium text-slate-300 transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-font"></i> Text
-                    </button>
-                    <button onclick="switchTab('link')" id="tab-link" class="tab-btn flex-1 py-2.5 px-3 rounded-xl text-xs md:text-sm font-medium text-slate-300 transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-link"></i> Link
-                    </button>
-                    <button onclick="switchTab('contact')" id="tab-contact" class="tab-btn flex-1 py-2.5 px-3 rounded-xl text-xs md:text-sm font-medium text-slate-300 transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-address-card"></i> Contact Info
-                    </button>
-                    <button onclick="switchTab('art')" id="tab-art" class="tab-btn flex-1 py-2.5 px-3 rounded-xl text-xs md:text-sm font-medium text-slate-300 transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> Art / Hidden
-                    </button>
+    <!-- 1. NAVIGATION BAR (NO LOGIN / NO SIGNUP) -->
+    <header class="w-full glass-nav sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            
+            <!-- Left Brand Logo -->
+            <div class="flex items-center gap-3">
+                <div class="bg-gradient-to-tr from-purple-600 to-blue-500 text-white p-2 rounded-xl shadow-lg shadow-purple-500/30 font-bold text-sm">
+                    <i class="fa-solid fa-qrcode text-lg"></i>
                 </div>
-
-                <!-- Input Forms Section -->
-                <div class="glass-card p-6 rounded-2xl">
-                    
-                    <!-- 1. Text Input -->
-                    <div id="form-text" class="tab-content space-y-3">
-                        <label class="block text-slate-200 font-semibold text-sm md:text-base"><i class="fa-regular fa-file-lines text-indigo-400"></i> Plain Text Content:</label>
-                        <textarea id="input-text" rows="4" class="w-full p-3 rounded-xl glass-input placeholder-slate-400 font-normal" placeholder="Type or paste any text content here..." oninput="updateQRCode()"></textarea>
-                    </div>
-
-                    <!-- 2. Link / URL Input -->
-                    <div id="form-link" class="tab-content hidden space-y-3">
-                        <label class="block text-slate-200 font-semibold text-sm md:text-base"><i class="fa-solid fa-globe text-indigo-400"></i> Website URL Link:</label>
-                        <input type="url" id="input-url" class="w-full p-3 rounded-xl glass-input placeholder-slate-400" placeholder="https://example.com" oninput="updateQRCode()">
-                    </div>
-
-                    <!-- 3. Contact Info (vCard) -->
-                    <div id="form-contact" class="tab-content hidden space-y-3">
-                        <label class="block text-slate-200 font-semibold text-sm md:text-base"><i class="fa-solid fa-user-plus text-indigo-400"></i> Contact Info (vCard Format):</label>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <input type="text" id="vcard-name" placeholder="Full Name *" class="p-3 rounded-xl glass-input placeholder-slate-400 text-sm" oninput="updateQRCode()">
-                            <input type="tel" id="vcard-phone" placeholder="Phone Number *" class="p-3 rounded-xl glass-input placeholder-slate-400 text-sm" oninput="updateQRCode()">
-                            <input type="email" id="vcard-email" placeholder="Email Address" class="p-3 rounded-xl glass-input placeholder-slate-400 text-sm" oninput="updateQRCode()">
-                            <input type="text" id="vcard-org" placeholder="Organization / Company" class="p-3 rounded-xl glass-input placeholder-slate-400 text-sm" oninput="updateQRCode()">
-                            <input type="url" id="vcard-website" placeholder="Website URL" class="p-3 rounded-xl glass-input placeholder-slate-400 text-sm md:col-span-2" oninput="updateQRCode()">
-                        </div>
-                    </div>
-
-                    <!-- 4. Art / Hidden QR Code -->
-                    <div id="form-art" class="tab-content hidden space-y-4">
-                        <div>
-                            <label class="block text-slate-200 font-semibold text-sm mb-1"><i class="fa-solid fa-key text-indigo-400"></i> Hidden Payload (Text or URL):</label>
-                            <input type="text" id="art-data" placeholder="Secret link or secret text to encode..." class="w-full p-3 rounded-xl glass-input placeholder-slate-400 text-sm" oninput="updateQRCode()">
-                        </div>
-                        <div>
-                            <label class="block text-slate-200 font-semibold text-sm mb-1"><i class="fa-solid fa-image text-indigo-400"></i> Background Image for Blending:</label>
-                            <input type="file" id="art-image-input" accept="image/*" class="w-full p-2 glass-input rounded-xl text-xs text-slate-300 cursor-pointer" onchange="handleArtImageUpload(event)">
-                        </div>
-                        <div>
-                            <label class="block text-slate-200 font-semibold text-xs mb-1">Image Blending Opacity: <span id="art-opacity-val" class="text-indigo-400 font-bold">50%</span></label>
-                            <input type="range" id="art-opacity" min="0.1" max="0.9" value="0.5" step="0.05" class="w-full accent-indigo-500 cursor-pointer" oninput="document.getElementById('art-opacity-val').innerText = Math.round(this.value * 100) + '%'; updateQRCode();">
-                        </div>
-                    </div>
-
+                <div class="flex flex-col leading-none">
+                    <span class="font-extrabold text-base sm:text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-purple-300 bg-clip-text text-transparent">
+                        SURAJIT
+                    </span>
+                    <span class="text-[10px] font-semibold text-purple-400 tracking-wider">QR CODE HELPER</span>
                 </div>
-
-                <!-- Customization Panel -->
-                <div class="glass-card p-6 rounded-2xl space-y-5">
-                    <h2 class="text-lg font-bold text-white border-b border-white/10 pb-2 flex items-center gap-2">
-                        <i class="fa-solid fa-sliders text-indigo-400"></i> Advanced Customization Settings
-                    </h2>
-
-                    <!-- Error Correction Level & Preset Size -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-slate-200 font-medium text-xs mb-1">Error Correction Level:</label>
-                            <select id="ecc-level" class="w-full p-2.5 rounded-xl glass-input text-xs font-medium" onchange="updateQRCode()">
-                                <option value="L">Low (L) - 7% Recovery</option>
-                                <option value="M" selected>Medium (M) - 15% Recovery</option>
-                                <option value="Q">Quartile (Q) - 25% Recovery</option>
-                                <option value="H">High (H) - 30% Recovery</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-slate-200 font-medium text-xs mb-1">Preset Size Options:</label>
-                            <select id="preset-size" class="w-full p-2.5 rounded-xl glass-input text-xs font-medium" onchange="applyPresetSize(this.value)">
-                                <option value="200">Small (200 x 200 px)</option>
-                                <option value="300" selected>Medium (300 x 300 px)</option>
-                                <option value="400">Large (400 x 400 px)</option>
-                                <option value="custom">Custom Size Slider</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Colors Customization with Swap Button -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-                        <div>
-                            <label class="block text-slate-200 font-medium text-xs mb-1">Foreground (Dark) Color:</label>
-                            <div class="flex items-center gap-2">
-                                <input type="color" id="color-dark" value="#0f172a" class="h-10 w-12 rounded-lg cursor-pointer bg-transparent border-0" onchange="updateQRCode()">
-                                <input type="text" id="color-dark-hex" value="#0F172A" class="w-full p-2 rounded-xl glass-input text-xs uppercase" readonly>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-slate-200 font-medium text-xs mb-1">Background (Light) Color:</label>
-                            <div class="flex items-center gap-2">
-                                <input type="color" id="color-light" value="#ffffff" class="h-10 w-12 rounded-lg cursor-pointer bg-transparent border-0" onchange="updateQRCode()">
-                                <input type="text" id="color-light-hex" value="#FFFFFF" class="w-full p-2 rounded-xl glass-input text-xs uppercase" readonly>
-                                <button onclick="swapColors()" title="Swap Colors" class="p-2.5 rounded-xl glass-input hover:bg-white/20 transition">
-                                    <i class="fa-solid fa-arrows-rotate text-xs"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Size Slider & Border Padding -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-slate-200 font-medium text-xs mb-1">Canvas Size: <span id="scale-val" class="font-bold text-indigo-400">300</span>px</label>
-                            <input type="range" id="qr-scale" min="150" max="600" value="300" step="10" class="w-full accent-indigo-500 cursor-pointer" oninput="document.getElementById('scale-val').innerText=this.value; updateQRCode();">
-                        </div>
-                        <div>
-                            <label class="block text-slate-200 font-medium text-xs mb-1">Border Padding: <span id="border-val" class="font-bold text-indigo-400">4</span> modules</label>
-                            <input type="range" id="qr-border" min="0" max="10" value="4" class="w-full accent-indigo-500 cursor-pointer" oninput="document.getElementById('border-val').innerText=this.value; updateQRCode();">
-                        </div>
-                    </div>
-
-                    <!-- Center Logo Upload -->
-                    <div>
-                        <label class="block text-slate-200 font-medium text-xs mb-1"><i class="fa-solid fa-icons text-indigo-400"></i> Center Logo Image Overlay:</label>
-                        <div class="flex gap-2">
-                            <input type="file" id="logo-input" accept="image/*" class="w-full p-2 glass-input rounded-xl text-xs text-slate-300 cursor-pointer" onchange="handleLogoUpload(event)">
-                            <button onclick="clearLogo()" class="px-3 py-2 text-xs bg-red-500/30 hover:bg-red-500/50 rounded-xl text-white transition">Clear</button>
-                        </div>
-                    </div>
-
-                </div>
-
             </div>
 
-            <!-- Right Preview & Statistics Panel -->
-            <div class="lg:col-span-5 flex flex-col gap-6">
+            <!-- Center Navigation Links -->
+            <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
+                <a href="#" class="text-white font-semibold border-b-2 border-purple-500 pb-1">Generator</a>
+                <button onclick="openScannerModal()" class="hover:text-white flex items-center gap-2 transition">
+                    <i class="fa-solid fa-camera text-purple-400"></i> Scan QR
+                </button>
+                <button onclick="openCustomizerModal()" class="hover:text-white flex items-center gap-2 transition">
+                    <i class="fa-solid fa-palette text-blue-400"></i> Customize
+                </button>
+                <a href="#about" class="hover:text-white transition">Features</a>
+            </nav>
 
-                <!-- Live Preview Card -->
-                <div class="glass-card p-6 rounded-2xl flex flex-col items-center justify-center text-center relative min-h-[400px]">
-                    <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-eye text-indigo-400"></i> Live QR Code Preview
-                    </h3>
+            <!-- Right Quick Actions (No Auth Buttons) -->
+            <div class="flex items-center gap-3">
+                <button onclick="openScannerModal()" class="flex items-center gap-2 px-3.5 py-2 text-xs font-semibold bg-white/10 hover:bg-white/20 text-white rounded-xl border border-white/10 transition backdrop-blur-md">
+                    <i class="fa-solid fa-camera text-purple-300"></i>
+                    <span class="hidden sm:inline">Scanner</span>
+                </button>
+                <button onclick="saveQRCode()" class="flex items-center gap-2 px-4 py-2 text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 rounded-xl shadow-lg shadow-purple-500/25 transition">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Download QR</span>
+                </button>
+            </div>
+        </div>
+    </header>
 
-                    <!-- Display Canvas Container -->
-                    <div id="qr-wrapper" class="p-5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-inner flex items-center justify-center min-w-[240px] min-h-[240px]">
-                        <div id="qrcode-canvas" class="flex justify-center items-center"></div>
+    <!-- MAIN APP CONTAINER -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-8 md:py-12 flex flex-col items-center">
+
+        <!-- 2. PAGE TITLE HEADER -->
+        <div class="text-center mb-8 max-w-3xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-medium mb-3">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Glassmorphic QR Generator & Scanner
+            </div>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
+                Surajit QR Code Helper
+            </h1>
+            <p class="text-slate-300 text-sm sm:text-base mt-3 font-normal max-w-xl mx-auto">
+                Create modern customized QR codes for URLs, contact cards, text, WiFi, and images in seconds.
+            </p>
+        </div>
+
+        <!-- 3. MAIN GLASS APP CARD -->
+        <div class="w-full glass-card p-6 sm:p-8 md:p-10 text-white">
+
+            <!-- Top Icon Navigation Bar -->
+            <div class="flex items-center justify-between gap-2 overflow-x-auto pb-4 mb-8 border-b border-white/10 scrollbar-none">
+                <div onclick="setTab('url')" id="tab-url" class="glass-tab active">
+                    <i class="fa-solid fa-link text-base mb-1"></i>
+                    <span>URL</span>
+                </div>
+                <div onclick="setTab('pdf')" id="tab-pdf" class="glass-tab">
+                    <i class="fa-solid fa-file-pdf text-base mb-1"></i>
+                    <span>PDF</span>
+                </div>
+                <div onclick="setTab('multi')" id="tab-multi" class="glass-tab">
+                    <i class="fa-solid fa-bars-staggered text-base mb-1"></i>
+                    <span>Multi-Url</span>
+                </div>
+                <div onclick="setTab('contact')" id="tab-contact" class="glass-tab">
+                    <i class="fa-solid fa-address-book text-base mb-1"></i>
+                    <span>Contact</span>
+                </div>
+                <div onclick="setTab('text')" id="tab-text" class="glass-tab">
+                    <i class="fa-solid fa-align-left text-base mb-1"></i>
+                    <span>Text</span>
+                </div>
+                <div onclick="setTab('wifi')" id="tab-wifi" class="glass-tab">
+                    <i class="fa-solid fa-wifi text-base mb-1"></i>
+                    <span>Wi-Fi</span>
+                </div>
+                <div onclick="setTab('app')" id="tab-app" class="glass-tab">
+                    <i class="fa-solid fa-border-all text-base mb-1"></i>
+                    <span>App</span>
+                </div>
+                <div onclick="setTab('sms')" id="tab-sms" class="glass-tab">
+                    <i class="fa-solid fa-comment-dots text-base mb-1"></i>
+                    <span>SMS</span>
+                </div>
+                <div onclick="setTab('email')" id="tab-email" class="glass-tab">
+                    <i class="fa-solid fa-envelope text-base mb-1"></i>
+                    <span>Email</span>
+                </div>
+                <div onclick="setTab('phone')" id="tab-phone" class="glass-tab">
+                    <i class="fa-solid fa-phone text-base mb-1"></i>
+                    <span>Phone</span>
+                </div>
+                <div onclick="setTab('social')" id="tab-social" class="glass-tab">
+                    <i class="fa-solid fa-share-nodes text-base mb-1"></i>
+                    <span>Social</span>
+                </div>
+            </div>
+
+            <!-- Two Column Layout: Left Inputs | Right Interactive Canvas -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+                <!-- Left Column Input Area -->
+                <div class="lg:col-span-7 space-y-6">
+                    
+                    <h2 id="input-title" class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-globe text-purple-400"></i> Redirect to an existing web URL
+                    </h2>
+
+                    <!-- Dynamic Input Content -->
+                    <div id="dynamic-inputs" class="space-y-4 min-h-[160px]">
+                        <div class="relative">
+                            <input type="text" id="payload-url" class="glass-input pr-12" placeholder="Enter website URL (e.g. https://yourname.com)" value="https://example.com" oninput="renderQR()">
+                            <i class="fa-solid fa-link absolute right-5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        </div>
                     </div>
 
-                    <!-- Export & Format Select Controls -->
-                    <div class="mt-6 w-full space-y-3">
-                        <div class="flex items-center gap-2">
-                            <label class="text-xs text-slate-300 font-medium">Export Format:</label>
-                            <select id="output-format" class="flex-1 p-2 rounded-xl glass-input text-xs font-semibold">
-                                <option value="png">PNG (Bitmap Image)</option>
-                                <option value="jpeg">JPG (Bitmap Image)</option>
-                                <option value="svg">SVG (Vector Graphics)</option>
-                            </select>
-                        </div>
-                        <button onclick="downloadQR()" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold text-base shadow-lg hover:shadow-indigo-500/30 transition duration-300 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-download"></i> Download QR Code
+                    <p id="helper-text" class="text-xs text-slate-400 pl-2">
+                        Try something like https://example.com/
+                    </p>
+
+                    <!-- Toggle Options -->
+                    <div class="pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" id="toggle-logo" class="w-4 h-4 accent-purple-500 rounded cursor-pointer" checked onchange="renderQR()">
+                            <span class="text-sm font-medium text-slate-300">Show Center Badge ✨</span>
+                        </label>
+                        <button onclick="openCustomizerModal()" class="text-xs text-purple-300 hover:text-white flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-sliders"></i> Advanced Customization
                         </button>
                     </div>
+
                 </div>
 
-                <!-- Live Statistics Card -->
-                <div class="glass-card p-6 rounded-2xl space-y-3">
-                    <h3 class="text-md font-bold text-white border-b border-white/10 pb-2 flex items-center gap-2">
-                        <i class="fa-solid fa-chart-pie text-indigo-400"></i> QR Code Live Statistics
-                    </h3>
-                    <div class="grid grid-cols-2 gap-3 text-xs text-slate-200">
-                        <div class="p-2.5 rounded-xl bg-white/5 border border-white/10">
-                            <span class="text-slate-400 block text-[10px] uppercase tracking-wider">Version Range</span>
-                            <span id="stat-version" class="font-bold text-sm text-indigo-300">1 (Auto)</span>
+                <!-- Right Column Interactive QR Preview -->
+                <div class="lg:col-span-5 flex flex-col items-center">
+                    
+                    <p class="text-xs text-slate-400 mb-3 text-center flex items-center gap-1.5">
+                        <i class="fa-solid fa-eye text-purple-400"></i> Live Interactive Preview
+                    </p>
+
+                    <!-- QR Display & Thumbnails Stack -->
+                    <div class="flex items-center gap-4 glass-panel p-5">
+                        
+                        <!-- Main Canvas Wrapper -->
+                        <div class="bg-white p-4 rounded-2xl shadow-2xl flex items-center justify-center min-w-[200px] min-h-[200px]">
+                            <div id="qr-canvas-container"></div>
                         </div>
-                        <div class="p-2.5 rounded-xl bg-white/5 border border-white/10">
-                            <span class="text-slate-400 block text-[10px] uppercase tracking-wider">Mask Pattern</span>
-                            <span id="stat-mask" class="font-bold text-sm text-indigo-300">Auto (-1)</span>
+
+                        <!-- Vertical Preset Color Thumbnails -->
+                        <div class="flex flex-col gap-2.5">
+                            <div onclick="applyStylePreset('classic')" id="preset-classic" class="qr-style-thumb selected p-1 bg-white/10 rounded-xl hover:bg-white/20 transition" title="Classic Theme">
+                                <div class="w-9 h-9 bg-slate-900 rounded-lg flex items-center justify-center text-[10px] font-bold text-white border border-white/20">Classic</div>
+                            </div>
+                            <div onclick="applyStylePreset('purple')" id="preset-purple" class="qr-style-thumb p-1 bg-white/10 rounded-xl hover:bg-white/20 transition" title="Purple Neon">
+                                <div class="w-9 h-9 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center text-[10px] font-bold text-white">Purple</div>
+                            </div>
+                            <div onclick="applyStylePreset('blue')" id="preset-blue" class="qr-style-thumb p-1 bg-white/10 rounded-xl hover:bg-white/20 transition" title="Ocean Blue">
+                                <div class="w-9 h-9 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center text-[10px] font-bold text-white">Blue</div>
+                            </div>
+                            <div onclick="applyStylePreset('rounded')" id="preset-rounded" class="qr-style-thumb p-1 bg-white/10 rounded-xl hover:bg-white/20 transition" title="Dot Pattern">
+                                <div class="w-9 h-9 bg-teal-600 rounded-full flex items-center justify-center text-[10px] font-bold text-white">Dot</div>
+                            </div>
                         </div>
-                        <div class="p-2.5 rounded-xl bg-white/5 border border-white/10">
-                            <span class="text-slate-400 block text-[10px] uppercase tracking-wider">Character Count</span>
-                            <span id="stat-chars" class="font-bold text-sm text-indigo-300">0</span>
-                        </div>
-                        <div class="p-2.5 rounded-xl bg-white/5 border border-white/10">
-                            <span class="text-slate-400 block text-[10px] uppercase tracking-wider">Error Correction</span>
-                            <span id="stat-ecc" class="font-bold text-sm text-indigo-300">Medium (M)</span>
-                        </div>
+
                     </div>
+
+                    <!-- Action Bar Buttons -->
+                    <div class="mt-4 w-full grid grid-cols-4 gap-2">
+                        <button onclick="saveQRCode()" class="col-span-1 py-2.5 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold text-sm rounded-xl transition shadow-lg shadow-purple-500/20 flex items-center justify-center gap-1">
+                            Save
+                        </button>
+                        <button onclick="downloadQR('png')" title="Download PNG" class="py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/10 font-bold text-sm rounded-xl transition flex items-center justify-center">
+                            <i class="fa-solid fa-download"></i>
+                        </button>
+                        <button onclick="copyQRToClipboard()" title="Copy Image" class="py-2.5 bg-white/10 hover:bg-white/20 text-white border border-white/10 font-bold text-sm rounded-xl transition flex items-center justify-center">
+                            <i class="fa-solid fa-copy"></i>
+                        </button>
+                        <button onclick="openCustomizerModal()" title="Customize Colors & Style" class="py-2.5 bg-white/10 hover:bg-white/20 text-purple-300 border border-white/10 font-bold text-sm rounded-xl transition flex items-center justify-center">
+                            <i class="fa-solid fa-palette"></i>
+                        </button>
+                    </div>
+
                 </div>
 
             </div>
 
         </div>
 
-        <!-- Footer -->
-        <footer class="mt-8 text-center text-slate-400 text-xs font-medium">
-            <p>Ready for deployment on GitHub Pages • Client-Side HTML5 / Canvas Engine</p>
-        </footer>
+        <!-- 4. FEATURES FOOTER INFO SECTION -->
+        <div id="about" class="mt-12 w-full grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="glass-panel p-6">
+                <div class="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-300 text-lg mb-4">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Instant Live Generation</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    QR codes render in real time directly inside your web browser with high vector accuracy.
+                </p>
+            </div>
+            <div class="glass-panel p-6">
+                <div class="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-300 text-lg mb-4">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">100% Client-Side Privacy</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    No data is sent to external servers. Your contact details, WiFi passwords, and links remain private.
+                </p>
+            </div>
+            <div class="glass-panel p-6">
+                <div class="w-10 h-10 rounded-xl bg-teal-500/20 border border-teal-500/30 flex items-center justify-center text-teal-300 text-lg mb-4">
+                    <i class="fa-solid fa-camera-retro"></i>
+                </div>
+                <h3 class="text-base font-bold text-white mb-2">Built-in Camera Scanner</h3>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    Use your mobile or desktop webcam to scan and decode existing QR codes effortlessly.
+                </p>
+            </div>
+        </div>
 
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full glass-nav mt-auto py-6 border-t border-white/10">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+            <p>© 2026 Surajit QR Code Helper. All rights reserved.</p>
+            <div class="flex items-center gap-4">
+                <a href="#" class="hover:text-white transition">Privacy</a>
+                <a href="#" class="hover:text-white transition">Terms</a>
+                <a href="https://github.com" target="_blank" class="hover:text-white transition"><i class="fa-brands fa-github text-base"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- CUSTOMIZATION PALETTE MODAL -->
+    <div id="modal-customizer" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
+        <div class="glass-card max-w-md w-full p-6 text-white space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <h3 class="font-bold text-lg flex items-center gap-2 text-purple-300">
+                    <i class="fa-solid fa-palette"></i> Customize QR Style
+                </h3>
+                <button onclick="closeCustomizerModal()" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-sm">
+                <div>
+                    <label class="block text-slate-300 text-xs mb-1 font-medium">Dots Pattern Style:</label>
+                    <select id="opt-dots-style" class="w-full bg-slate-900/80 border border-white/15 rounded-xl p-2.5 text-white outline-none focus:border-purple-500" onchange="renderQR()">
+                        <option value="square">Square (Classic)</option>
+                        <option value="dots">Dots</option>
+                        <option value="rounded">Rounded</option>
+                        <option value="classy">Classy</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-slate-300 text-xs mb-1 font-medium">Foreground Color:</label>
+                        <input type="color" id="opt-color-fg" value="#000000" class="w-full h-10 bg-transparent rounded-xl cursor-pointer" onchange="renderQR()">
+                    </div>
+                    <div>
+                        <label class="block text-slate-300 text-xs mb-1 font-medium">Background Color:</label>
+                        <input type="color" id="opt-color-bg" value="#ffffff" class="w-full h-10 bg-transparent rounded-xl cursor-pointer" onchange="renderQR()">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-slate-300 text-xs mb-1 font-medium">Center Logo Upload:</label>
+                    <input type="file" id="opt-logo-file" accept="image/*" class="w-full text-xs text-slate-400 bg-slate-900/80 rounded-xl p-2 border border-white/10" onchange="handleLogoUpload(event)">
+                </div>
+
+                <div>
+                    <label class="block text-slate-300 text-xs mb-1 font-medium">Error Correction Level:</label>
+                    <select id="opt-ecc" class="w-full bg-slate-900/80 border border-white/15 rounded-xl p-2.5 text-white outline-none focus:border-purple-500" onchange="renderQR()">
+                        <option value="L">Low (7%)</option>
+                        <option value="M" selected>Medium (15%)</option>
+                        <option value="Q">Quartile (25%)</option>
+                        <option value="H">High (30%)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="pt-3">
+                <button onclick="closeCustomizerModal()" class="w-full py-2.5 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold rounded-xl transition shadow-lg shadow-purple-500/25">
+                    Apply & Close
+                </button>
+            </div>
+        </div>
     </div>
 
-    <!-- JavaScript Application Logic -->
-    <script>
-        // State Variables
-        let currentTab = 'text';
-        let qrCodeStyling = null;
-        let uploadedLogoData = null;
-        let artImageData = null;
+    <!-- WEBCAM SCANNER MODAL -->
+    <div id="modal-scanner" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
+        <div class="glass-card max-w-md w-full p-6 text-white space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <h3 class="font-bold text-lg flex items-center gap-2 text-purple-300">
+                    <i class="fa-solid fa-camera"></i> Scan QR Code with Camera
+                </h3>
+                <button onclick="closeScannerModal()" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
 
-        // Initialize App on DOM Ready
+            <div id="webcam-reader" class="w-full bg-slate-950 rounded-xl overflow-hidden min-h-[240px] border border-white/10"></div>
+
+            <div id="scan-result" class="hidden p-3 bg-purple-900/40 border border-purple-500/40 rounded-xl text-xs break-all text-purple-200">
+                <strong>Scanned Data:</strong> <span id="scan-result-text"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        let qrCodeStyling = null;
+        let activeTab = 'url';
+        let centerLogoData = "";
+        let html5QrCodeScanner = null;
+
+        // On Load Initialization
         window.onload = function() {
-            initQRCode();
-            updateQRCode();
+            initQR();
+            setTab('url');
         };
 
-        // Tab Navigation Switching
-        function switchTab(tab) {
-            currentTab = tab;
-            
-            // Highlight buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`tab-${tab}`).classList.add('active');
-
-            // Toggle form views
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
-            document.getElementById(`form-${tab}`).classList.remove('hidden');
-
-            updateQRCode();
-        }
-
-        // Initialize QR Code Styling Engine
-        function initQRCode() {
+        // Initialize QRCode Engine
+        function initQR() {
             qrCodeStyling = new QRCodeStyling({
-                width: 250,
-                height: 250,
+                width: 200,
+                height: 200,
                 type: "canvas",
-                data: "https://github.com",
+                data: "https://example.com",
                 image: "",
-                dotsOptions: {
-                    color: "#0f172a",
-                    type: "rounded"
-                },
-                backgroundOptions: {
-                    color: "#ffffff",
-                },
-                imageOptions: {
-                    crossOrigin: "anonymous",
-                    margin: 4
-                }
+                dotsOptions: { color: "#000000", type: "square" },
+                backgroundOptions: { color: "#ffffff" },
+                imageOptions: { crossOrigin: "anonymous", margin: 4 }
             });
 
-            const container = document.getElementById("qrcode-canvas");
-            container.innerHTML = "";
-            qrCodeStyling.append(container);
-        }
-
-        // Retrieve current active payload
-        function getQRData() {
-            let data = "";
-            if (currentTab === 'text') {
-                data = document.getElementById('input-text').value || "Welcome to Glassmorphic QR Generator!";
-            } else if (currentTab === 'link') {
-                data = document.getElementById('input-url').value || "https://github.com";
-            } else if (currentTab === 'contact') {
-                const name = document.getElementById('vcard-name').value || "John Doe";
-                const phone = document.getElementById('vcard-phone').value || "+1234567890";
-                const email = document.getElementById('vcard-email').value || "john@example.com";
-                const org = document.getElementById('vcard-org').value || "Acme Corp";
-                const website = document.getElementById('vcard-website').value || "https://example.com";
-                data = `BEGIN:VCARD\nVERSION:3.0\nN:${name}\nTEL:${phone}\nEMAIL:${email}\nORG:${org}\nURL:${website}\nEND:VCARD`;
-            } else if (currentTab === 'art') {
-                data = document.getElementById('art-data').value || "Artistic Hidden QR Code Data";
+            const container = document.getElementById("qr-canvas-container");
+            if (container) {
+                container.innerHTML = "";
+                qrCodeStyling.append(container);
             }
-            return data;
         }
 
-        // Main QR Update Handler
-        function updateQRCode() {
+        // Tab Switching Logic
+        function setTab(tab) {
+            activeTab = tab;
+            
+            // Highlight Tab Item
+            document.querySelectorAll('.glass-tab').forEach(el => el.classList.remove('active'));
+            const activeTabElem = document.getElementById(`tab-${tab}`);
+            if (activeTabElem) activeTabElem.classList.add('active');
+
+            const titleElem = document.getElementById('input-title');
+            const inputsElem = document.getElementById('dynamic-inputs');
+            const helperElem = document.getElementById('helper-text');
+
+            if (tab === 'url') {
+                if (titleElem) titleElem.innerHTML = `<i class="fa-solid fa-globe text-purple-400"></i> Redirect to an existing web URL`;
+                if (inputsElem) {
+                    inputsElem.innerHTML = `
+                    <div class="relative">
+                        <input type="text" id="payload-url" class="glass-input pr-12" placeholder="Enter website URL (e.g. https://yourname.com)" value="https://example.com" oninput="renderQR()">
+                        <i class="fa-solid fa-link absolute right-5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    </div>`;
+                }
+                if (helperElem) helperElem.innerText = "Try something like https://example.com/";
+            } else if (tab === 'pdf') {
+                if (titleElem) titleElem.innerHTML = `<i class="fa-solid fa-file-pdf text-purple-400"></i> Share a PDF Document Link`;
+                if (inputsElem) {
+                    inputsElem.innerHTML = `
+                    <div class="p-6 border-2 border-dashed border-white/20 rounded-2xl text-center glass-panel">
+                        <i class="fa-solid fa-cloud-arrow-up text-3xl text-purple-400 mb-2"></i>
+                        <p class="text-sm font-semibold text-slate-200">Upload PDF File</p>
+                        <p class="text-xs text-slate-400 mt-1">Select your PDF file to convert to downloadable QR link</p>
+                        <input type="file" accept="application/pdf" class="mt-3 text-xs text-slate-300 mx-auto block cursor-pointer">
+                    </div>`;
+                }
+                if (helperElem) helperElem.innerText = "Generates direct downloadable PDF link QR code.";
+            } else if (tab === 'multi') {
+                if (titleElem) titleElem.innerHTML = `<i class="fa-solid fa-bars-staggered text-purple-400"></i> Multi-URL Landing Page`;
+                if (inputsElem) {
+                    inputsElem.innerHTML = `
+                    <input type="text" id="payload-m1" class="glass-input mb-3" placeholder="Primary Link 1 (e.g. https://site.com)" oninput="renderQR()">
+                    <input type="text" id="payload-m2" class="glass-input" placeholder="Secondary Link 2" oninput="renderQR()">`;
+                }
+                if (helperElem) helperElem.innerText = "Combine multiple destination URLs into a single QR.";
+            } else if (tab === 'contact') {
+                if (titleElem) titleElem.innerHTML = `<i class="fa-solid fa-address-book text-purple-400"></i> vCard Contact Information`;
+                if (inputsElem) {
+                    inputsElem.innerHTML = `
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="text" id="vc-name" class="glass-input text-xs" placeholder="Full Name" oninput="renderQR()">
+                        <input type="text" id="vc-phone" class="glass-input text-xs" placeholder="Phone Number" oninput="renderQR()">
+                        <input type="email" id="vc-email" class="glass-input text-xs" placeholder="Email Address" oninput="renderQR()">
+                        <input type="text" id="vc-org" class="glass-input text-xs" placeholder="Company / Org" oninput="renderQR()">
+                    </div>`;
+                }
+                if (helperElem) helperElem.innerText = "Scanners will automatically prompt to save contact to phonebook.";
+            } else if (tab === 'text') {
+                if (titleElem) titleElem.innerHTML = `<i class="fa-solid fa-align-left text-purple-400"></i> Plain Text Content`;
+                if (inputsElem) {
+                    inputsElem.innerHTML = `
+                    <textarea id="payload-text" rows="3" class="w-full bg-white/10 text-white border border-white/15 rounded-2xl p-4 text-sm font-normal focus:outline-none focus:ring-2 focus:ring-purple-500 placeholder-slate-400" placeholder="Type plain text message..." oninput="renderQR()"></textarea>`;
+                }
+                if (helperElem) helperElem.innerText = "Displays raw unformatted text on mobile devices.";
+            } else if (tab === 'wifi') {
+                if (titleElem) titleElem.innerHTML = `<i class="fa-solid fa-wifi text-purple-400"></i> Connect to Wi-Fi Network`;
+                if (inputsElem) {
+                    inputsElem.innerHTML = `
+                    <input type="text" id="wifi-ssid" class="glass-input mb-3 text-xs" placeholder="Network SSID (WiFi Name)" oninput="renderQR()">
+                    <input type="text" id="wifi-pass" class="glass-input text-xs" placeholder="Password" oninput="renderQR()">`;
+                }
+                if (helperElem) helperElem.innerText = "Scanning allows instant connection without typing password.";
+            } else if (tab === 'app') {
+                if (titleElem) titleElem.innerHTML = `<i class="fa-solid fa-border-all text-purple-400"></i> App Store / Play Store Link`;
+                if (inputsElem) {
+                    inputsElem.innerHTML = `
+                    <input type="text" id="payload-app" class="glass-input" placeholder="https://apps.apple.com/app/id123456" oninput="renderQR()">`;
+                }
+                if (helperElem) helperElem.innerText = "Direct users to download your mobile application.";
+            } else if (tab === 'sms') {
+                if (titleElem) titleElem.innerHTML = `<i class="fa-solid fa-comment-dots text-purple-400"></i> Send SMS Message`;
+                if (inputsElem) {
+                    inputsElem.innerHTML = `
+                    <input type="text" id="sms-phone" class="glass-input mb-3 text-sm" placeholder="Recipient Phone Number" oninput="renderQR()">
+                    <input type="text" id="sms-body" class="glass-input text-sm" placeholder="Pre-filled SMS Body" oninput="renderQR()">`;
+                }
+                if (helperElem) helperElem.innerText = "Pre-fills SMS text message ready to send.";
+            } else if (tab === 'email') {
+                if (titleElem) titleElem.innerHTML = `<i class="fa-solid fa-envelope text-purple-400"></i> Send Email Message`;
+                if (inputsElem) {
+                    inputsElem.innerHTML = `
+                    <input type="email" id="email-to" class="glass-input mb-3 text-sm" placeholder="Recipient Email (e.g. hello@site.com)" oninput="renderQR()">
+                    <input type="text" id="email-subject" class="glass-input text-sm" placeholder="Subject Line" oninput="renderQR()">`;
+                }
+                if (helperElem) helperElem.innerText = "Opens default mail client with pre-filled address & subject.";
+            } else if (tab === 'phone') {
+                if (titleElem) titleElem.innerHTML = `<i class="fa-solid fa-phone text-purple-400"></i> Direct Phone Call`;
+                if (inputsElem) {
+                    inputsElem.innerHTML = `
+                    <input type="tel" id="phone-number" class="glass-input" placeholder="+1234567890" oninput="renderQR()">`;
+                }
+                if (helperElem) helperElem.innerText = "Initiates phone call directly upon scanning.";
+            } else if (tab === 'social') {
+                if (titleElem) titleElem.innerHTML = `<i class="fa-solid fa-share-nodes text-purple-400"></i> Social Media Profile Link`;
+                if (inputsElem) {
+                    inputsElem.innerHTML = `
+                    <input type="text" id="payload-social" class="glass-input" placeholder="https://instagram.com/yourprofile" oninput="renderQR()">`;
+                }
+                if (helperElem) helperElem.innerText = "Link your Instagram, YouTube, TikTok, or LinkedIn profile.";
+            }
+
+            renderQR();
+        }
+
+        // Get Payload Data
+        function getPayloadData() {
+            if (activeTab === 'url') return document.getElementById('payload-url')?.value || 'https://example.com';
+            if (activeTab === 'pdf') return 'https://example.com/document.pdf';
+            if (activeTab === 'multi') return (document.getElementById('payload-m1')?.value || 'https://example.com');
+            if (activeTab === 'contact') {
+                const n = document.getElementById('vc-name')?.value || 'Surajit User';
+                const p = document.getElementById('vc-phone')?.value || '+123456789';
+                return `BEGIN:VCARD\nVERSION:3.0\nN:${n}\nTEL:${p}\nEND:VCARD`;
+            }
+            if (activeTab === 'text') return document.getElementById('payload-text')?.value || 'Hello from Surajit QR Helper';
+            if (activeTab === 'wifi') {
+                const s = document.getElementById('wifi-ssid')?.value || 'MyWiFi';
+                const p = document.getElementById('wifi-pass')?.value || '12345678';
+                return `WIFI:S:${s};T:WPA;P:${p};;`;
+            }
+            if (activeTab === 'app') return document.getElementById('payload-app')?.value || 'https://apps.apple.com';
+            if (activeTab === 'sms') {
+                const ph = document.getElementById('sms-phone')?.value || '12345';
+                const b = document.getElementById('sms-body')?.value || 'Hello';
+                return `SMSTO:${ph}:${b}`;
+            }
+            if (activeTab === 'email') {
+                const e = document.getElementById('email-to')?.value || 'contact@example.com';
+                const s = document.getElementById('email-subject')?.value || 'Hello';
+                return `MATMSG:TO:${e};SUB:${s};;`;
+            }
+            if (activeTab === 'phone') return `TEL:${document.getElementById('phone-number')?.value || '+123456789'}`;
+            if (activeTab === 'social') return document.getElementById('payload-social')?.value || 'https://instagram.com';
+            return 'https://example.com';
+        }
+
+        // Render Canvas
+        function renderQR() {
             if (!qrCodeStyling) return;
 
-            const dataText = getQRData();
-            const darkColor = document.getElementById('color-dark').value;
-            const lightColor = document.getElementById('color-light').value;
-            const size = parseInt(document.getElementById('qr-scale').value) || 300;
-            const margin = parseInt(document.getElementById('qr-border').value) || 4;
-            const ecc = document.getElementById('ecc-level').value;
+            const dataText = getPayloadData();
+            const dotStyle = document.getElementById('opt-dots-style')?.value || 'square';
+            const colorFg = document.getElementById('opt-color-fg')?.value || '#000000';
+            const colorBg = document.getElementById('opt-color-bg')?.value || '#ffffff';
+            const ecc = document.getElementById('opt-ecc')?.value || 'M';
+            const showLogo = document.getElementById('toggle-logo')?.checked;
 
-            // Sync Hex input values
-            document.getElementById('color-dark-hex').value = darkColor.toUpperCase();
-            document.getElementById('color-light-hex').value = lightColor.toUpperCase();
-
-            // Configure rendering options
-            const options = {
-                width: 250,
-                height: 250,
+            qrCodeStyling.update({
                 data: dataText,
-                margin: margin,
-                qrOptions: {
-                    errorCorrectionLevel: ecc
-                },
-                dotsOptions: {
-                    color: darkColor,
-                    type: "rounded"
-                },
-                backgroundOptions: {
-                    color: lightColor,
-                },
-                image: uploadedLogoData || ""
-            };
-
-            qrCodeStyling.update(options);
-
-            // Trigger art blending if art tab active & image uploaded
-            if (currentTab === 'art' && artImageData) {
-                setTimeout(() => applyArtQRBlending(artImageData), 120);
-            }
-
-            // Update live statistics
-            updateStats(dataText, ecc);
+                dotsOptions: { color: colorFg, type: dotStyle },
+                backgroundOptions: { color: colorBg },
+                qrOptions: { errorCorrectionLevel: ecc },
+                image: showLogo ? (centerLogoData || "") : ""
+            });
         }
 
-        // Apply Preset Canvas Size
-        function applyPresetSize(val) {
-            if (val !== 'custom') {
-                document.getElementById('qr-scale').value = val;
-                document.getElementById('scale-val').innerText = val;
-                updateQRCode();
-            }
-        }
+        // Apply Preset Color Schemes
+        function applyStylePreset(preset) {
+            document.querySelectorAll('.qr-style-thumb').forEach(el => el.classList.remove('selected'));
+            const presetElem = document.getElementById(`preset-${preset}`);
+            if (presetElem) presetElem.classList.add('selected');
 
-        // Swap Foreground & Background Colors
-        function swapColors() {
-            const darkElem = document.getElementById('color-dark');
-            const lightElem = document.getElementById('color-light');
-            const temp = darkElem.value;
-            darkElem.value = lightElem.value;
-            lightElem.value = temp;
-            updateQRCode();
+            const dotsSelect = document.getElementById('opt-dots-style');
+            const fgInput = document.getElementById('opt-color-fg');
+            const bgInput = document.getElementById('opt-color-bg');
+
+            if (preset === 'classic') {
+                if (dotsSelect) dotsSelect.value = 'square';
+                if (fgInput) fgInput.value = '#000000';
+                if (bgInput) bgInput.value = '#ffffff';
+            } else if (preset === 'purple') {
+                if (dotsSelect) dotsSelect.value = 'square';
+                if (fgInput) fgInput.value = '#7c3aed';
+                if (bgInput) bgInput.value = '#ffffff';
+            } else if (preset === 'blue') {
+                if (dotsSelect) dotsSelect.value = 'square';
+                if (fgInput) fgInput.value = '#2563eb';
+                if (bgInput) bgInput.value = '#ffffff';
+            } else if (preset === 'rounded') {
+                if (dotsSelect) dotsSelect.value = 'dots';
+                if (fgInput) fgInput.value = '#0d9488';
+                if (bgInput) bgInput.value = '#ffffff';
+            }
+            renderQR();
         }
 
         // Handle Center Logo Upload
-        function handleLogoUpload(event) {
-            const file = event.target.files[0];
+        function handleLogoUpload(e) {
+            const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    uploadedLogoData = e.target.result;
-                    updateQRCode();
+                reader.onload = function(evt) {
+                    centerLogoData = evt.target.result;
+                    renderQR();
                 };
                 reader.readAsDataURL(file);
             }
         }
 
-        // Clear Logo Image
-        function clearLogo() {
-            uploadedLogoData = null;
-            document.getElementById('logo-input').value = "";
-            updateQRCode();
+        // Modal Controls
+        function openCustomizerModal() { document.getElementById('modal-customizer')?.classList.remove('hidden'); }
+        function closeCustomizerModal() { document.getElementById('modal-customizer')?.classList.add('hidden'); }
+
+        function openScannerModal() {
+            document.getElementById('modal-scanner')?.classList.remove('hidden');
+            html5QrCodeScanner = new Html5QrcodeScanner("webcam-reader", { fps: 10, qrbox: 200 });
+            html5QrCodeScanner.render((decodedText) => {
+                const scanRes = document.getElementById('scan-result');
+                const scanText = document.getElementById('scan-result-text');
+                if (scanRes) scanRes.classList.remove('hidden');
+                if (scanText) scanText.innerText = decodedText;
+            }, (error) => {});
         }
 
-        // Handle Art Image Upload
-        function handleArtImageUpload(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    artImageData = e.target.result;
-                    updateQRCode();
-                };
-                reader.readAsDataURL(file);
+        function closeScannerModal() {
+            document.getElementById('modal-scanner')?.classList.add('hidden');
+            if (html5QrCodeScanner) {
+                html5QrCodeScanner.clear();
             }
         }
 
-        // Custom Canvas Blending for Art/Hidden QR Codes
-        function applyArtQRBlending(imageSrc) {
-            const canvasElem = document.querySelector('#qrcode-canvas canvas');
-            if (!canvasElem) return;
-
-            const ctx = canvasElem.getContext('2d');
-            const opacity = parseFloat(document.getElementById('art-opacity').value) || 0.5;
-            const img = new Image();
-            img.src = imageSrc;
-
-            img.onload = function() {
-                ctx.globalAlpha = opacity;
-                ctx.drawImage(img, 0, 0, canvasElem.width, canvasElem.height);
-                ctx.globalAlpha = 1.0;
-            };
+        // Actions
+        function downloadQR(ext) {
+            qrCodeStyling.download({ name: `surajit_qr_${Date.now()}`, extension: ext });
         }
 
-        // Update Statistics Panel
-        function updateStats(dataText, ecc) {
-            document.getElementById('stat-chars').innerText = dataText.length;
-            document.getElementById('stat-ecc').innerText = `${ecc} Level`;
-            
-            // Approximate QR version calculation
-            let version = Math.min(Math.max(Math.ceil(dataText.length / 15), 1), 40);
-            document.getElementById('stat-version').innerText = `${version} (Auto)`;
-            document.getElementById('stat-mask').innerText = "Auto (-1)";
+        function saveQRCode() {
+            downloadQR('png');
         }
 
-        // Download QR Code File
-        function downloadQR() {
-            const format = document.getElementById('output-format').value;
-            const timestamp = new Date().getTime();
-            const filename = `qrcode_${currentTab}_${timestamp}`;
-
-            if (qrCodeStyling) {
-                qrCodeStyling.download({
-                    name: filename,
-                    extension: format
+        function copyQRToClipboard() {
+            const canvas = document.querySelector("#qr-canvas-container canvas");
+            if (canvas) {
+                canvas.toBlob(blob => {
+                    try {
+                        const item = new ClipboardItem({ "image/png": blob });
+                        navigator.clipboard.write([item]);
+                        alert("QR Code copied to clipboard!");
+                    } catch (err) {
+                        alert("Clipboard copying is not supported on this browser.");
+                    }
                 });
             }
         }
